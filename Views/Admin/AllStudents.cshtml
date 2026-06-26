@@ -1,0 +1,97 @@
+@model List<StudentManagementSystem.Models.Student>
+
+@{
+    ViewData["Title"] = "All Students";
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>All Students Directory</h2>
+        <a href="/Admin/AddStudent" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Add New Student
+        </a>
+    </div>
+    
+    <hr />
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-warning">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Department</th>
+                        <th>Address</th>
+                        <th>Advisor ID</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        foreach (var student in Model)
+                        {
+                            <tr>
+                                <td><strong>@student.StudentId</strong></td>
+                                <td>@student.FullName</td>
+                                <td>@student.Email</td>
+                                <td>@student.Phone</td>
+                                <td>@student.Department</td>
+                                <td>@student.Address</td>
+                                <td>@student.AdvisorId</td>
+                                <td class="text-end">
+                                    <!-- Edit Button -->
+                                    <a href="/Admin/UpdateStudent?id=@student.StudentId" class="btn btn-sm btn-warning">Edit</a>
+                                    
+                                    <!-- Delete Button using a simple form to POST -->
+                                    <form action="/Admin/DeleteStudent" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this student?');">
+                                        <input type="hidden" name="id" value="@student.StudentId" />
+                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-4 text-muted">
+                                No students found. Make sure Oracle DB is connected and Setup.sql is executed.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <a href="/Admin/Dashboard" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</div>
