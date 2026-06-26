@@ -1,0 +1,47 @@
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white text-center">
+                <h4>@ViewBag.Role Login</h4>
+            </div>
+            <div class="card-body p-4">
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+                }
+
+                <form method="post" action="/Account/Login">
+                    <!-- Hidden field to keep track of the selected role -->
+                    <input type="hidden" name="role" value="@ViewBag.Role" />
+
+                    <div class="mb-3">
+                        <label for="userId" class="form-label">User ID</label>
+                        <input type="text" class="form-control" id="userId" name="userId" placeholder="Enter your ID" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Login</button>
+                    </div>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <a href="/" class="text-decoration-none">Back to Role Selection</a>
+                </div>
+                
+                <hr />
+                <div class="text-muted small text-center">
+                    <em>Week 1 Testing Hint: Use ID <strong>@ViewBag.Role.ToLower()</strong> and Password <strong>@ViewBag.Role.ToLower()123</strong></em>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,20 @@
+@{
+    ViewData["Title"] = "Select Role";
+}
+
+<div class="text-center mt-5">
+    <h1 class="display-4">Student Management System</h1>
+    <p class="lead">Please select your role to continue.</p>
+
+    <div class="d-flex justify-content-center gap-4 mt-4">
+        <a href="/Account/Login?role=Admin" class="btn btn-primary btn-lg px-5 py-3">
+            <i class="bi bi-shield-lock"></i> Admin
+        </a>
+        <a href="/Account/Login?role=Teacher" class="btn btn-success btn-lg px-5 py-3">
+            <i class="bi bi-person-workspace"></i> Teacher
+        </a>
+        <a href="/Account/Login?role=Student" class="btn btn-info btn-lg px-5 py-3 text-white">
+            <i class="bi bi-person-badge"></i> Student
+        </a>
+    </div>
+</div>
