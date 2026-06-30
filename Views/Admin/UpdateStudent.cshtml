@@ -21,7 +21,8 @@
                 <!-- Keep StudentId readonly because it's the Primary Key -->
                 <div class="mb-3">
                     <label asp-for="StudentId" class="form-label">Student ID</label>
-                    <input asp-for="StudentId" class="form-control" readonly />
+                    <input asp-for="StudentId" class="form-control" disabled />
+                    <input type="hidden" asp-for="StudentId" />
                     <div class="form-text">Student ID cannot be changed.</div>
                 </div>
                 <div class="mb-3">

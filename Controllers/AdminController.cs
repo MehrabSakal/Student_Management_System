@@ -12,20 +12,18 @@ namespace StudentManagementSystem.Controllers
 
         public AdminController(IConfiguration configuration)
         {
-            // Get connection string from appsettings.json
+            
             string connString = configuration.GetConnectionString("OracleDbConnection");
             _dbHelper = new DatabaseHelper(connString);
         }
 
-        // GET: /Admin/Dashboard
+   
         public IActionResult Dashboard()
         {
             return View();
         }
 
-        // ==========================================
-        // ADD STUDENT
-        // ==========================================
+      
         [HttpGet]
         public IActionResult AddStudent()
         {
@@ -37,7 +35,6 @@ namespace StudentManagementSystem.Controllers
         {
             try
             {
-                // Call PL/SQL procedure through helper
                 _dbHelper.AddStudent(student);
                 TempData["SuccessMessage"] = "Student added successfully using PL/SQL!";
                 return RedirectToAction("AllStudents");
@@ -49,9 +46,7 @@ namespace StudentManagementSystem.Controllers
             }
         }
 
-        // ==========================================
-        // UPDATE STUDENT
-        // ==========================================
+       
         [HttpGet]
         public IActionResult UpdateStudent(string id)
         {
@@ -75,9 +70,9 @@ namespace StudentManagementSystem.Controllers
         {
             try
             {
-                // Call PL/SQL procedure through helper
+               
                 _dbHelper.UpdateStudent(student);
-                TempData["SuccessMessage"] = "Student updated successfully using PL/SQL!";
+                TempData["SuccessMessage"] = "Student updated successfully!";
                 return RedirectToAction("AllStudents");
             }
             catch (Exception ex)
@@ -87,9 +82,7 @@ namespace StudentManagementSystem.Controllers
             }
         }
 
-        // ==========================================
-        // DELETE STUDENT
-        // ==========================================
+        
         [HttpGet]
         public IActionResult DeleteStudent()
         {
@@ -101,9 +94,8 @@ namespace StudentManagementSystem.Controllers
         {
             try
             {
-                // Call PL/SQL procedure through helper
                 _dbHelper.DeleteStudent(id);
-                TempData["SuccessMessage"] = "Student deleted successfully using PL/SQL!";
+                TempData["SuccessMessage"] = "Student deleted successfully!";
             }
             catch (Exception ex)
             {
@@ -112,9 +104,7 @@ namespace StudentManagementSystem.Controllers
             return RedirectToAction("AllStudents");
         }
 
-        // ==========================================
-        // SEE ALL STUDENTS
-        // ==========================================
+       
         [HttpGet]
         public IActionResult AllStudents()
         {
@@ -125,16 +115,11 @@ namespace StudentManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-                // If Oracle isn't connected yet, we show a friendly message and dummy data.
                 ViewBag.ErrorMessage = "Database not connected. Please run Setup.sql and configure appsettings.json. Here is dummy data: " + ex.Message;
                 return View(new System.Collections.Generic.List<Student>());
             }
         }
 
-        // ==========================================
-        // LIBRARY
-        // ==========================================
-        // GET: /Admin/Library
         public IActionResult Library()
         {
             return Content("Library Management (To be built next week)");

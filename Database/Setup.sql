@@ -1,12 +1,5 @@
--- =============================================
--- STUDENT MANAGEMENT SYSTEM - DATABASE SETUP
--- =============================================
--- Run this script in your Oracle Database to create
--- the tables and PL/SQL procedures needed for the app.
-
 SET SERVEROUTPUT ON;
 
--- 1. Create the STUDENTS table
 CREATE TABLE students (
     student_id VARCHAR2(20) PRIMARY KEY,
     full_name VARCHAR2(100) NOT NULL,
@@ -18,7 +11,6 @@ CREATE TABLE students (
 );
 /
 
--- 2. PL/SQL Procedure to ADD a new student
 CREATE OR REPLACE PROCEDURE add_student (
     p_student_id IN students.student_id%TYPE,
     p_full_name IN students.full_name%TYPE,
@@ -45,7 +37,6 @@ EXCEPTION
 END;
 /
 
--- 3. PL/SQL Procedure to UPDATE a student
 CREATE OR REPLACE PROCEDURE update_student (
     p_student_id IN students.student_id%TYPE,
     p_full_name IN students.full_name%TYPE,
@@ -75,7 +66,6 @@ EXCEPTION
 END;
 /
 
--- 4. PL/SQL Procedure to DELETE a student
 CREATE OR REPLACE PROCEDURE delete_student (
     p_student_id IN students.student_id%TYPE
 )

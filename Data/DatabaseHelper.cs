@@ -14,7 +14,6 @@ namespace StudentManagementSystem.Data
             _connectionString = connectionString;
         }
 
-        // Method to get a single student by ID
         public Student GetStudent(string studentId)
         {
             Student student = null;
@@ -24,8 +23,8 @@ namespace StudentManagementSystem.Data
                 con.Open();
                 using (OracleCommand cmd = con.CreateCommand())
                 {
-                    // Simple SQL query to fetch a student
                     cmd.CommandText = "SELECT student_id, full_name, email, phone, department, address, advisor_id FROM students WHERE student_id = :id";
+                    cmd.BindByName = true;
                     cmd.Parameters.Add("id", OracleDbType.Varchar2).Value = studentId;
 
                     using (OracleDataReader reader = cmd.ExecuteReader())
@@ -50,7 +49,6 @@ namespace StudentManagementSystem.Data
             return student;
         }
 
-        // Method to get all students
         public List<Student> GetAllStudents()
         {
             List<Student> students = new List<Student>();
@@ -84,7 +82,6 @@ namespace StudentManagementSystem.Data
             return students;
         }
 
-        // Method to call PL/SQL procedure to ADD a student
         public void AddStudent(Student student)
         {
             using (OracleConnection con = new OracleConnection(_connectionString))
@@ -92,24 +89,23 @@ namespace StudentManagementSystem.Data
                 con.Open();
                 using (OracleCommand cmd = con.CreateCommand())
                 {
-                    // We call the PL/SQL stored procedure here
                     cmd.CommandText = "add_student";
                     cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
 
-                    cmd.Parameters.Add("p_student_id", OracleDbType.Varchar2).Value = student.StudentId;
-                    cmd.Parameters.Add("p_full_name", OracleDbType.Varchar2).Value = student.FullName;
-                    cmd.Parameters.Add("p_email", OracleDbType.Varchar2).Value = student.Email;
-                    cmd.Parameters.Add("p_phone", OracleDbType.Varchar2).Value = student.Phone;
-                    cmd.Parameters.Add("p_department", OracleDbType.Varchar2).Value = student.Department;
-                    cmd.Parameters.Add("p_address", OracleDbType.Varchar2).Value = student.Address;
-                    cmd.Parameters.Add("p_advisor_id", OracleDbType.Varchar2).Value = student.AdvisorId;
+                    cmd.Parameters.Add("p_student_id", OracleDbType.Varchar2).Value = (object)student.StudentId ?? DBNull.Value;
+                    cmd.Parameters.Add("p_full_name", OracleDbType.Varchar2).Value = (object)student.FullName ?? DBNull.Value;
+                    cmd.Parameters.Add("p_email", OracleDbType.Varchar2).Value = (object)student.Email ?? DBNull.Value;
+                    cmd.Parameters.Add("p_phone", OracleDbType.Varchar2).Value = (object)student.Phone ?? DBNull.Value;
+                    cmd.Parameters.Add("p_department", OracleDbType.Varchar2).Value = (object)student.Department ?? DBNull.Value;
+                    cmd.Parameters.Add("p_address", OracleDbType.Varchar2).Value = (object)student.Address ?? DBNull.Value;
+                    cmd.Parameters.Add("p_advisor_id", OracleDbType.Varchar2).Value = (object)student.AdvisorId ?? DBNull.Value;
 
                     cmd.ExecuteNonQuery();
                 }
             }
         }
 
-        // Method to call PL/SQL procedure to UPDATE a student
         public void UpdateStudent(Student student)
         {
             using (OracleConnection con = new OracleConnection(_connectionString))
@@ -119,21 +115,21 @@ namespace StudentManagementSystem.Data
                 {
                     cmd.CommandText = "update_student";
                     cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
 
-                    cmd.Parameters.Add("p_student_id", OracleDbType.Varchar2).Value = student.StudentId;
-                    cmd.Parameters.Add("p_full_name", OracleDbType.Varchar2).Value = student.FullName;
-                    cmd.Parameters.Add("p_email", OracleDbType.Varchar2).Value = student.Email;
-                    cmd.Parameters.Add("p_phone", OracleDbType.Varchar2).Value = student.Phone;
-                    cmd.Parameters.Add("p_department", OracleDbType.Varchar2).Value = student.Department;
-                    cmd.Parameters.Add("p_address", OracleDbType.Varchar2).Value = student.Address;
-                    cmd.Parameters.Add("p_advisor_id", OracleDbType.Varchar2).Value = student.AdvisorId;
+                    cmd.Parameters.Add("p_student_id", OracleDbType.Varchar2).Value = (object)student.StudentId ?? DBNull.Value;
+                    cmd.Parameters.Add("p_full_name", OracleDbType.Varchar2).Value = (object)student.FullName ?? DBNull.Value;
+                    cmd.Parameters.Add("p_email", OracleDbType.Varchar2).Value = (object)student.Email ?? DBNull.Value;
+                    cmd.Parameters.Add("p_phone", OracleDbType.Varchar2).Value = (object)student.Phone ?? DBNull.Value;
+                    cmd.Parameters.Add("p_department", OracleDbType.Varchar2).Value = (object)student.Department ?? DBNull.Value;
+                    cmd.Parameters.Add("p_address", OracleDbType.Varchar2).Value = (object)student.Address ?? DBNull.Value;
+                    cmd.Parameters.Add("p_advisor_id", OracleDbType.Varchar2).Value = (object)student.AdvisorId ?? DBNull.Value;
 
                     cmd.ExecuteNonQuery();
                 }
             }
         }
 
-        // Method to call PL/SQL procedure to DELETE a student
         public void DeleteStudent(string studentId)
         {
             using (OracleConnection con = new OracleConnection(_connectionString))
@@ -143,6 +139,7 @@ namespace StudentManagementSystem.Data
                 {
                     cmd.CommandText = "delete_student";
                     cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
 
                     cmd.Parameters.Add("p_student_id", OracleDbType.Varchar2).Value = studentId;
 
