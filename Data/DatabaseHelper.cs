@@ -82,6 +82,95 @@ namespace StudentManagementSystem.Data
             return students;
         }
 
+        public List<Teacher> GetAllTeachers()
+        {
+            List<Teacher> teachers = new List<Teacher>();
+
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT teacher_id, first_name, last_name, email, designation, department FROM teachers";
+
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            teachers.Add(new Teacher
+                            {
+                                TeacherId = reader["teacher_id"].ToString(),
+                                FirstName = reader["first_name"].ToString(),
+                                LastName = reader["last_name"].ToString(),
+                                Email = reader["email"].ToString(),
+                                Designation = reader["designation"].ToString(),
+                                Department = reader["department"].ToString()
+                            });
+                        }
+                    }
+                }
+            }
+
+            return teachers;
+        }
+
+        public Teacher GetTeacher(string teacherId)
+        {
+            Teacher teacher = null;
+
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT teacher_id, first_name, last_name, email, designation, department FROM teachers WHERE teacher_id = :id";
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("id", OracleDbType.Varchar2).Value = teacherId;
+
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            teacher = new Teacher
+                            {
+                                TeacherId = reader["teacher_id"].ToString(),
+                                FirstName = reader["first_name"].ToString(),
+                                LastName = reader["last_name"].ToString(),
+                                Email = reader["email"].ToString(),
+                                Designation = reader["designation"].ToString(),
+                                Department = reader["department"].ToString()
+                            };
+                        }
+                    }
+                }
+            }
+
+            return teacher;
+        }
+
+        public void AddTeacher(Teacher teacher)
+        {
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "add_teacher";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
+
+                    cmd.Parameters.Add("p_teacher_id", OracleDbType.Varchar2).Value = (object)teacher.TeacherId ?? DBNull.Value;
+                    cmd.Parameters.Add("p_first_name", OracleDbType.Varchar2).Value = (object)teacher.FirstName ?? DBNull.Value;
+                    cmd.Parameters.Add("p_last_name", OracleDbType.Varchar2).Value = (object)teacher.LastName ?? DBNull.Value;
+                    cmd.Parameters.Add("p_email", OracleDbType.Varchar2).Value = (object)teacher.Email ?? DBNull.Value;
+                    cmd.Parameters.Add("p_designation", OracleDbType.Varchar2).Value = (object)teacher.Designation ?? DBNull.Value;
+                    cmd.Parameters.Add("p_department", OracleDbType.Varchar2).Value = (object)teacher.Department ?? DBNull.Value;
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
         public void AddStudent(Student student)
         {
             using (OracleConnection con = new OracleConnection(_connectionString))
@@ -142,6 +231,47 @@ namespace StudentManagementSystem.Data
                     cmd.BindByName = true;
 
                     cmd.Parameters.Add("p_student_id", OracleDbType.Varchar2).Value = studentId;
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void UpdateTeacher(Teacher teacher)
+        {
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "update_teacher";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
+
+                    cmd.Parameters.Add("p_teacher_id", OracleDbType.Varchar2).Value = (object)teacher.TeacherId ?? DBNull.Value;
+                    cmd.Parameters.Add("p_first_name", OracleDbType.Varchar2).Value = (object)teacher.FirstName ?? DBNull.Value;
+                    cmd.Parameters.Add("p_last_name", OracleDbType.Varchar2).Value = (object)teacher.LastName ?? DBNull.Value;
+                    cmd.Parameters.Add("p_email", OracleDbType.Varchar2).Value = (object)teacher.Email ?? DBNull.Value;
+                    cmd.Parameters.Add("p_designation", OracleDbType.Varchar2).Value = (object)teacher.Designation ?? DBNull.Value;
+                    cmd.Parameters.Add("p_department", OracleDbType.Varchar2).Value = (object)teacher.Department ?? DBNull.Value;
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteTeacher(string teacherId)
+        {
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "delete_teacher";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
+
+                    cmd.Parameters.Add("p_teacher_id", OracleDbType.Varchar2).Value = teacherId;
 
                     cmd.ExecuteNonQuery();
                 }

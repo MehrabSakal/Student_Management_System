@@ -36,7 +36,7 @@ namespace StudentManagementSystem.Controllers
             try
             {
                 _dbHelper.AddStudent(student);
-                TempData["SuccessMessage"] = "Student added successfully using PL/SQL!";
+                TempData["SuccessMessage"] = "Student added successfully!";
                 return RedirectToAction("AllStudents");
             }
             catch (Exception ex)
@@ -47,6 +47,35 @@ namespace StudentManagementSystem.Controllers
         }
 
        
+        [HttpGet]
+        public IActionResult AddTeacher()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddTeacher(Teacher teacher)
+        {
+            try
+            {
+                _dbHelper.AddTeacher(teacher);
+                TempData["SuccessMessage"] = "Teacher added successfully using PL/SQL!";
+                return RedirectToAction("Dashboard");
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("ORA-00001"))
+                {
+                    ViewBag.ErrorMessage = "A teacher with this ID already exists. Please use a different ID.";
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = "Error adding teacher: " + ex.Message;
+                }
+                return View(teacher);
+            }
+        }
+
         [HttpGet]
         public IActionResult UpdateStudent(string id)
         {
@@ -117,6 +146,76 @@ namespace StudentManagementSystem.Controllers
             {
                 ViewBag.ErrorMessage = "Database not connected. Please run Setup.sql and configure appsettings.json. Here is dummy data: " + ex.Message;
                 return View(new System.Collections.Generic.List<Student>());
+            }
+        }
+
+        [HttpGet]
+        public IActionResult UpdateTeacher(string id)
+        {
+            try
+            {
+                Teacher teacher = _dbHelper.GetTeacher(id);
+                if (teacher == null)
+                {
+                    return NotFound();
+                }
+                return View(teacher);
+            }
+            catch (Exception ex)
+            {
+                return Content("Error loading teacher: " + ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult UpdateTeacher(Teacher teacher)
+        {
+            try
+            {
+                _dbHelper.UpdateTeacher(teacher);
+                TempData["SuccessMessage"] = "Teacher updated successfully!";
+                return RedirectToAction("AllTeachers");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Error updating teacher: " + ex.Message;
+                return View(teacher);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult DeleteTeacher()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult DeleteTeacher(string id)
+        {
+            try
+            {
+                _dbHelper.DeleteTeacher(id);
+                TempData["SuccessMessage"] = "Teacher deleted successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error deleting teacher: " + ex.Message;
+            }
+            return RedirectToAction("AllTeachers");
+        }
+
+        [HttpGet]
+        public IActionResult AllTeachers()
+        {
+            try
+            {
+                var teachers = _dbHelper.GetAllTeachers();
+                return View(teachers);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Database not connected or error fetching teachers: " + ex.Message;
+                return View(new System.Collections.Generic.List<Teacher>());
             }
         }
 
