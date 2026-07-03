@@ -42,8 +42,13 @@
                     <input asp-for="Designation" type="text" class="form-control" />
                 </div>
                 <div class="mb-3">
-                    <label asp-for="Department" class="form-label">Department</label>
-                    <input asp-for="Department" type="text" class="form-control" />
+                    <label asp-for="DeptId" class="form-label">Department ID</label>
+                    <input asp-for="DeptId" type="text" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label">Password</label>
+                    <input asp-for="Password" type="password" class="form-control" required />
+                    <div class="form-text">Update the teacher's password.</div>
                 </div>
 
                 <button type="submit" class="btn btn-warning">Update Teacher via PL/SQL</button>

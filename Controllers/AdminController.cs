@@ -20,6 +20,17 @@ namespace StudentManagementSystem.Controllers
    
         public IActionResult Dashboard()
         {
+            try
+            {
+                ViewBag.TotalStudents = _dbHelper.GetTotalStudents();
+                ViewBag.TotalTeachers = _dbHelper.GetTotalTeachers();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.TotalStudents = 0;
+                ViewBag.TotalTeachers = 0;
+                ViewBag.ErrorMessage = "Could not load dashboard statistics: " + ex.Message;
+            }
             return View();
         }
 
@@ -222,6 +233,94 @@ namespace StudentManagementSystem.Controllers
         public IActionResult Library()
         {
             return Content("Library Management (To be built next week)");
+        }
+
+        [HttpGet]
+        public IActionResult AddDepartment()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddDepartment(Department department)
+        {
+            try
+            {
+                _dbHelper.AddDepartment(department);
+                TempData["SuccessMessage"] = "Department added successfully!";
+                return RedirectToAction("Dashboard");
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("ORA-00001"))
+                {
+                    ViewBag.ErrorMessage = "A department with this ID already exists. Please use a different ID.";
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = "Error adding department: " + ex.Message;
+                }
+                return View(department);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult AddCourse()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddCourse(Course course)
+        {
+            try
+            {
+                _dbHelper.AddCourse(course);
+                TempData["SuccessMessage"] = "Course added successfully!";
+                return RedirectToAction("Dashboard");
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("ORA-20003") || ex.Message.Contains("ORA-00001"))
+                {
+                    ViewBag.ErrorMessage = "A course with this NO already exists.";
+                }
+                else
+                {
+                    ViewBag.ErrorMessage = "Error adding course: " + ex.Message;
+                }
+                return View(course);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult AllDepartments()
+        {
+            try
+            {
+                var departments = _dbHelper.GetAllDepartments();
+                return View(departments);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Error fetching departments: " + ex.Message;
+                return View(new System.Collections.Generic.List<Department>());
+            }
+        }
+
+        [HttpGet]
+        public IActionResult AllCourses()
+        {
+            try
+            {
+                var courses = _dbHelper.GetAllCourses();
+                return View(courses);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Error fetching courses: " + ex.Message;
+                return View(new System.Collections.Generic.List<Course>());
+            }
         }
     }
 }

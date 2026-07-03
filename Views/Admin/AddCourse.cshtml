@@ -1,0 +1,45 @@
+@model StudentManagementSystem.Models.Course
+
+@{
+    ViewData["Title"] = "Add Course";
+}
+
+<div class="container mt-4">
+    <h2>Add New Course</h2>
+    <hr />
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-action="AddCourse" method="post">
+                <div class="mb-3">
+                    <label asp-for="CourseNo" class="form-label">Course Number</label>
+                    <input asp-for="CourseNo" class="form-control" required  />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="CourseName" class="form-label">Course Name</label>
+                    <input asp-for="CourseName" class="form-control" required  />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="DeptId" class="form-label">Department ID</label>
+                    <input asp-for="DeptId" type="text" class="form-control"  />
+                </div>
+                <div class="mb-3">
+                    <label asp-for="CourseType" class="form-label">Course Type</label>
+                    <select asp-for="CourseType" class="form-select">
+                        <option value="Theory">Theory</option>
+                        <option value="Lab">Lab</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Course</button>
+                <a href="/Admin/Dashboard" class="btn btn-secondary ms-2">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>

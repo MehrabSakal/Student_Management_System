@@ -1,0 +1,47 @@
+@{
+    ViewData["Title"] = "Teacher Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0">Teacher Dashboard</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Welcome, @User.Identity.Name!</h4>
+                    <p class="card-text text-muted">You are successfully logged in to the teacher portal.</p>
+                    
+                    <hr />
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light border-0 h-100">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-people fs-1 text-info mb-2"></i>
+                                    <h5>My Advisees</h5>
+                                    <p class="small text-muted">Manage your advising students</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light border-0 h-100">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-calendar-check fs-1 text-info mb-2"></i>
+                                    <h5>Class Schedule</h5>
+                                    <p class="small text-muted">View your upcoming classes</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="/Account/Logout" class="btn btn-outline-danger">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

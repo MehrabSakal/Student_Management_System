@@ -1,0 +1,58 @@
+@{
+    ViewData["Title"] = "Student Dashboard";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">Student Dashboard</h3>
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title">Welcome, @User.Identity.Name!</h4>
+                    <p class="card-text text-muted">You are successfully logged in to the student portal.</p>
+                    
+                    <hr />
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-light border-0 h-100">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-book fs-1 text-primary mb-2"></i>
+                                    <h5>My Courses</h5>
+                                    <p class="small text-muted">View your enrolled courses</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <a href="/Student/RegisterCourses" class="text-decoration-none text-dark">
+                                <div class="card bg-light border-0 h-100 shadow-sm transition-hover">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-plus-circle fs-1 text-success mb-2"></i>
+                                        <h5>Register Courses</h5>
+                                        <p class="small text-muted">Browse and enroll</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card bg-light border-0 h-100">
+                                <div class="card-body text-center">
+                                    <i class="bi bi-person-badge fs-1 text-primary mb-2"></i>
+                                    <h5>My Profile</h5>
+                                    <p class="small text-muted">Update your details</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-end">
+                    <a href="/Account/Logout" class="btn btn-outline-danger">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

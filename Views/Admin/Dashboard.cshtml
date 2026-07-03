@@ -9,8 +9,12 @@
                 <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
                     Admin Menu
                 </a>
+                <a href="/Admin/AddDepartment" class="list-group-item list-group-item-action">Add Department</a>
+                <a href="/Admin/AddCourse" class="list-group-item list-group-item-action">Add Course</a>
                 <a href="/Admin/AddStudent" class="list-group-item list-group-item-action">Add Student</a>
                 <a href="/Admin/AddTeacher" class="list-group-item list-group-item-action">Add Teacher</a>
+                <a href="/Admin/AllDepartments" class="list-group-item list-group-item-action">See All Departments</a>
+                <a href="/Admin/AllCourses" class="list-group-item list-group-item-action">See All Courses</a>
                 <a href="/Admin/AllStudents" class="list-group-item list-group-item-action">See All Students</a>
                 <a href="/Admin/AllTeachers" class="list-group-item list-group-item-action">See All Teachers</a>
                 <a href="/Admin/Library" class="list-group-item list-group-item-action">Library Management</a>
@@ -34,7 +38,7 @@
                             <div class="card bg-light">
                                 <div class="card-body text-center">
                                     <h6 class="card-title">Total Students</h6>
-                                    <h3>0</h3>
+                                    <h3>@ViewBag.TotalStudents</h3>
                                 </div>
                             </div>
                         </div>
@@ -50,7 +54,7 @@
                             <div class="card bg-light">
                                 <div class="card-body text-center">
                                     <h6 class="card-title">Total Teachers</h6>
-                                    <h3>0</h3>
+                                    <h3>@ViewBag.TotalTeachers</h3>
                                 </div>
                             </div>
                         </div>

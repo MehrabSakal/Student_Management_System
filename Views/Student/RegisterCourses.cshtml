@@ -1,0 +1,64 @@
+@model IEnumerable<StudentManagementSystem.Models.Course>
+
+@{
+    ViewData["Title"] = "Register for Courses";
+}
+
+<div class="container mt-4">
+    <h2>Course Registration</h2>
+    <hr />
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <form asp-action="RegisterCourses" method="post">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5>Available Courses</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center" style="width: 80px;">Select</th>
+                            <th>Course No</th>
+                            <th>Course Name</th>
+                            <th>Type</th>
+                            <th>Dept ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var course in Model)
+                            {
+                                <tr>
+                                    <td class="text-center">
+                                        <input type="checkbox" name="selectedCourses" value="@course.CourseNo" class="form-check-input" />
+                                    </td>
+                                    <td>@course.CourseNo</td>
+                                    <td>@course.CourseName</td>
+                                    <td>@course.CourseType</td>
+                                    <td>@course.DeptId</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">No courses available at the moment.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success btn-lg">Register Selected Courses</button>
+        <a href="/Student/Dashboard" class="btn btn-secondary btn-lg ms-2">Cancel</a>
+    </form>
+</div>
