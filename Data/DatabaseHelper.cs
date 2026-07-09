@@ -437,5 +437,127 @@ namespace StudentManagementSystem.Data
                 }
             }
         }
+
+        public List<Course> GetCoursesByDepartment(string deptId)
+        {
+            List<Course> courses = new List<Course>();
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT course_no, course_name, dept_id, course_type FROM courses WHERE dept_id = :dept_id";
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("dept_id", OracleDbType.Varchar2).Value = deptId;
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            courses.Add(new Course
+                            {
+                                CourseNo = reader["course_no"].ToString(),
+                                CourseName = reader["course_name"].ToString(),
+                                DeptId = reader["dept_id"].ToString(),
+                                CourseType = reader["course_type"].ToString()
+                            });
+                        }
+                    }
+                }
+            }
+            return courses;
+        }
+
+        public void AddAssignment(Assignment assignment)
+        {
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "add_assignment";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
+
+                    cmd.Parameters.Add("p_course_no", OracleDbType.Varchar2).Value = (object)assignment.CourseNo ?? DBNull.Value;
+                    cmd.Parameters.Add("p_teacher_id", OracleDbType.Varchar2).Value = (object)assignment.TeacherId ?? DBNull.Value;
+                    cmd.Parameters.Add("p_title", OracleDbType.Varchar2).Value = (object)assignment.Title ?? DBNull.Value;
+                    cmd.Parameters.Add("p_description", OracleDbType.Varchar2).Value = (object)assignment.Description ?? DBNull.Value;
+                    cmd.Parameters.Add("p_assignment_type", OracleDbType.Varchar2).Value = (object)assignment.AssignmentType ?? DBNull.Value;
+                    cmd.Parameters.Add("p_due_date", OracleDbType.Date).Value = (object)assignment.DueDate ?? DBNull.Value;
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List<Assignment> GetAssignmentsForTeacher(string teacherId)
+        {
+            List<Assignment> assignments = new List<Assignment>();
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT assignment_id, course_no, teacher_id, title, description, assignment_type, due_date FROM assignments WHERE teacher_id = :teacher_id";
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("teacher_id", OracleDbType.Varchar2).Value = teacherId;
+
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            assignments.Add(new Assignment
+                            {
+                                AssignmentId = Convert.ToInt32(reader["assignment_id"]),
+                                CourseNo = reader["course_no"].ToString(),
+                                TeacherId = reader["teacher_id"].ToString(),
+                                Title = reader["title"].ToString(),
+                                Description = reader["description"].ToString(),
+                                AssignmentType = reader["assignment_type"].ToString(),
+                                DueDate = reader["due_date"] != DBNull.Value ? Convert.ToDateTime(reader["due_date"]) : (DateTime?)null
+                            });
+                        }
+                    }
+                }
+            }
+            return assignments;
+        }
+
+        public List<Assignment> GetAssignmentsForStudent(string studentId)
+        {
+            List<Assignment> assignments = new List<Assignment>();
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT a.assignment_id, a.course_no, a.teacher_id, a.title, a.description, a.assignment_type, a.due_date
+                        FROM assignments a
+                        INNER JOIN student_courses sc ON a.course_no = sc.course_no
+                        WHERE sc.student_id = :student_id";
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("student_id", OracleDbType.Varchar2).Value = studentId;
+
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            assignments.Add(new Assignment
+                            {
+                                AssignmentId = Convert.ToInt32(reader["assignment_id"]),
+                                CourseNo = reader["course_no"].ToString(),
+                                TeacherId = reader["teacher_id"].ToString(),
+                                Title = reader["title"].ToString(),
+                                Description = reader["description"].ToString(),
+                                AssignmentType = reader["assignment_type"].ToString(),
+                                DueDate = reader["due_date"] != DBNull.Value ? Convert.ToDateTime(reader["due_date"]) : (DateTime?)null
+                            });
+                        }
+                    }
+                }
+            }
+            return assignments;
+        }
     }
 }

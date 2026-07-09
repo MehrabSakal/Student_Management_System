@@ -1,0 +1,66 @@
+@model IEnumerable<StudentManagementSystem.Models.Assignment>
+@{
+    ViewData["Title"] = "My Given Assignments";
+}
+
+<div class="container page-container">
+    <div class="row">
+        <div class="wide-wrapper">
+            <div class="header-actions">
+                <h3>My Given Assignments</h3>
+                <a asp-action="Dashboard" class="btn btn-outline-secondary">Back to Dashboard</a>
+            </div>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["SuccessMessage"]
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            <div class="panel">
+                <div class="panel-body">
+                    @if (Model == null || !Model.Any())
+                    {
+                        <div class="alert alert-info mb-0">You have not given any assignments yet.</div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Course No</th>
+                                        <th>Title</th>
+                                        <th>Type</th>
+                                        <th>Due Date</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var assignment in Model)
+                                    {
+                                        <tr>
+                                            <td>@assignment.CourseNo</td>
+                                            <td>@assignment.Title</td>
+                                            <td><span class="badge bg-primary">@assignment.AssignmentType</span></td>
+                                            <td>@(assignment.DueDate.HasValue ? assignment.DueDate.Value.ToString("MMM dd, yyyy") : "N/A")</td>
+                                            <td>@assignment.Description</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -29,3 +29,82 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* Custom UI Classes */
+.page-container {
+    margin-top: 1.5rem;
+}
+
+.centered-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.wide-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.panel {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    background-color: #fff;
+    border-radius: 0.25rem;
+    border: 1px solid rgba(0,0,0,.125);
+    margin-bottom: 1rem;
+}
+
+.panel-header-info {
+    background-color: #0dcaf0;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    border-radius: 0.25rem 0.25rem 0 0;
+}
+
+.panel-header-success {
+    background-color: #198754;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid rgba(0,0,0,.125);
+    border-radius: 0.25rem 0.25rem 0 0;
+}
+
+.panel-body {
+    padding: 1.25rem;
+}
+
+.dashboard-card {
+    background-color: #f8f9fa;
+    border: 0;
+    height: 100%;
+    border-radius: 0.25rem;
+    text-align: center;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: box-shadow 0.3s ease;
+    text-decoration: none;
+    color: #212529;
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    color: #212529;
+}
+
+.panel-footer {
+    padding: 0.75rem 1.25rem;
+    background-color: rgba(0, 0, 0, 0.03);
+    border-top: 1px solid rgba(0,0,0,.125);
+    text-align: right;
+    border-radius: 0 0 0.25rem 0.25rem;
+}

@@ -94,5 +94,20 @@ namespace StudentManagementSystem.Controllers
 
             return RedirectToAction("Dashboard");
         }
+
+        public IActionResult ViewAssignments()
+        {
+            try
+            {
+                string studentId = User.FindFirstValue("UserId");
+                var assignments = _dbHelper.GetAssignmentsForStudent(studentId);
+                return View(assignments);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error loading assignments: " + ex.Message;
+                return RedirectToAction("Dashboard");
+            }
+        }
     }
 }

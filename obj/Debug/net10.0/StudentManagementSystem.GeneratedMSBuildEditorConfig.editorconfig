@@ -98,8 +98,20 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3R1ZGVudFxSZWdpc3RlckNvdXJzZXMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[F:/Web Lab/Student_Management_System/Views/Student/ViewAssignments.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3R1ZGVudFxWaWV3QXNzaWdubWVudHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [F:/Web Lab/Student_Management_System/Views/Teacher/Dashboard.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVhY2hlclxEYXNoYm9hcmQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/Web Lab/Student_Management_System/Views/Teacher/GiveAssignment.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVhY2hlclxHaXZlQXNzaWdubWVudC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[F:/Web Lab/Student_Management_System/Views/Teacher/ViewAssignments.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcVGVhY2hlclxWaWV3QXNzaWdubWVudHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [F:/Web Lab/Student_Management_System/Views/_ViewImports.cshtml]

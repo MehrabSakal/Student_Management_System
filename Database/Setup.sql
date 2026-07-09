@@ -19,6 +19,12 @@ END;
 /
 
 BEGIN
+   EXECUTE IMMEDIATE 'DROP TABLE assignments CASCADE CONSTRAINTS';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+
+BEGIN
    EXECUTE IMMEDIATE 'DROP TABLE teachers CASCADE CONSTRAINTS';
 EXCEPTION WHEN OTHERS THEN NULL;
 END;
@@ -294,6 +300,61 @@ BEGIN
 EXCEPTION
     WHEN DUP_VAL_ON_INDEX THEN
         RAISE_APPLICATION_ERROR(-20002, 'Student is already registered for this course.');
+    WHEN OTHERS THEN
+        RAISE;
+END;
+/
+
+CREATE TABLE assignments (
+    assignment_id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    course_no VARCHAR2(20) NOT NULL,
+    teacher_id VARCHAR2(20) NOT NULL,
+    title VARCHAR2(100) NOT NULL,
+    description VARCHAR2(500),
+    assignment_type VARCHAR2(20) CHECK (assignment_type IN ('Assignment', 'Project')),
+    due_date DATE,
+    CONSTRAINT fk_assignment_course FOREIGN KEY (course_no) REFERENCES courses(course_no) ON DELETE CASCADE,
+    CONSTRAINT fk_assignment_teacher FOREIGN KEY (teacher_id) REFERENCES teachers(teacher_id) ON DELETE CASCADE
+);
+/
+
+CREATE OR REPLACE PROCEDURE add_assignment (
+    p_course_no IN assignments.course_no%TYPE,
+    p_teacher_id IN assignments.teacher_id%TYPE,
+    p_title IN assignments.title%TYPE,
+    p_description IN assignments.description%TYPE,
+    p_assignment_type IN assignments.assignment_type%TYPE,
+    p_due_date IN assignments.due_date%TYPE
+)
+IS
+    v_course_type courses.course_type%TYPE;
+    v_teacher_dept teachers.dept_id%TYPE;
+    v_course_dept courses.dept_id%TYPE;
+BEGIN
+    -- Verify teacher exists and get department
+    SELECT dept_id INTO v_teacher_dept FROM teachers WHERE teacher_id = p_teacher_id;
+    
+    -- Verify course exists and get type and department
+    SELECT course_type, dept_id INTO v_course_type, v_course_dept FROM courses WHERE course_no = p_course_no;
+    
+    -- Validate department (teacher can only give assignments for courses in their department)
+    IF v_teacher_dept != v_course_dept THEN
+        RAISE_APPLICATION_ERROR(-20005, 'You can only give assignments for courses in your department.');
+    END IF;
+    
+    -- Validate assignment type based on course type
+    IF v_course_type = 'Theory' AND p_assignment_type = 'Project' THEN
+        RAISE_APPLICATION_ERROR(-20004, 'Theory classes can only have Assignments, not Projects.');
+    END IF;
+    
+    -- Insert the assignment
+    INSERT INTO assignments (course_no, teacher_id, title, description, assignment_type, due_date)
+    VALUES (p_course_no, p_teacher_id, p_title, p_description, p_assignment_type, p_due_date);
+    
+    COMMIT;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20006, 'Course or Teacher not found.');
     WHEN OTHERS THEN
         RAISE;
 END;

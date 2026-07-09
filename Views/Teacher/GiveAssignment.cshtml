@@ -1,0 +1,70 @@
+@model StudentManagementSystem.Models.Assignment
+@{
+    ViewData["Title"] = "Give Assignment";
+    var courses = ViewBag.Courses as List<StudentManagementSystem.Models.Course>;
+}
+
+<div class="container page-container">
+    <div class="row">
+        <div class="centered-wrapper">
+            <div class="panel">
+                <div class="panel-header-info">
+                    <h3 class="mb-0">Give Assignment / Project</h3>
+                </div>
+                <div class="panel-body">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                    <form asp-action="GiveAssignment" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Select Course</label>
+                            <select class="form-select" asp-for="CourseNo" required>
+                                <option value="">-- Select Course --</option>
+                                @if (courses != null)
+                                {
+                                    @foreach (var course in courses)
+                                    {
+                                        <option value="@course.CourseNo">@course.CourseNo - @course.CourseName (@course.CourseType)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Type</label>
+                            <select class="form-select" asp-for="AssignmentType" required>
+                                <option value="Assignment">Assignment</option>
+                                <option value="Project">Project</option>
+                            </select>
+                            <div class="form-text text-muted">Note: Theory classes can only have Assignments. Lab classes can have Assignments or Projects.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" class="form-control" asp-for="Title" required />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" asp-for="Description" rows="4"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Due Date</label>
+                            <input type="date" class="form-control" asp-for="DueDate" required />
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-info text-white">Submit</button>
+                            <a asp-action="Dashboard" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
