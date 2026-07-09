@@ -31,7 +31,6 @@ F:\Web Lab\Student_Management_System\obj\Debug\net10.0\rjsmcshtml.dswa.cache.jso
 F:\Web Lab\Student_Management_System\obj\Debug\net10.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 F:\Web Lab\Student_Management_System\obj\Debug\net10.0\scopedcss\bundle\StudentManagementSystem.styles.css
 F:\Web Lab\Student_Management_System\obj\Debug\net10.0\scopedcss\projectbundle\StudentManagementSystem.bundle.scp.css
-F:\Web Lab\Student_Management_System\obj\Debug\net10.0\compressed\6tjizv99g7-{0}-b9sayid5wm-b9sayid5wm.gz
 F:\Web Lab\Student_Management_System\obj\Debug\net10.0\compressed\dfxarta68e-{0}-61n19gt1b8-61n19gt1b8.gz
 F:\Web Lab\Student_Management_System\obj\Debug\net10.0\compressed\2ks43q5myy-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 F:\Web Lab\Student_Management_System\obj\Debug\net10.0\compressed\02tmapkftl-{0}-bqjiyaj88i-bqjiyaj88i.gz
@@ -107,3 +106,4 @@ F:\Web Lab\Student_Management_System\obj\Debug\net10.0\StudentManagementSystem.p
 F:\Web Lab\Student_Management_System\obj\Debug\net10.0\StudentManagementSystem.genruntimeconfig.cache
 F:\Web Lab\Student_Management_System\obj\Debug\net10.0\ref\StudentManagementSystem.dll
 F:\Web Lab\Student_Management_System\obj\Debug\net10.0\StudentManagementSystem.sourcelink.json
+F:\Web Lab\Student_Management_System\obj\Debug\net10.0\compressed\6tjizv99g7-{0}-pm6e177sad-pm6e177sad.gz

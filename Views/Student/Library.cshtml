@@ -1,0 +1,70 @@
+@model IEnumerable<StudentManagementSystem.Models.Book>
+@{
+    ViewData["Title"] = "Library";
+}
+
+<div class="container page-container">
+    <div class="row">
+        <div class="wide-wrapper">
+            <div class="header-actions">
+                <h3>Library Catalog</h3>
+                <div>
+                    <a asp-action="MyBookRequests" class="btn btn-primary me-2">My Requests</a>
+                    <a asp-action="Dashboard" class="btn btn-outline-secondary">Back to Dashboard</a>
+                </div>
+            </div>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+            }
+
+            <div class="panel">
+                <div class="panel-body">
+                    @if (Model == null || !Model.Any())
+                    {
+                        <div class="alert alert-info mb-0">No books available in the library right now.</div>
+                    }
+                    else
+                    {
+                        <div class="row">
+                            @foreach (var book in Model)
+                            {
+                                <div class="col-md-6 col-lg-4 mb-4">
+                                    <div class="card h-100 shadow-sm">
+                                        <div class="card-body text-center">
+                                            <i class="bi bi-book fs-1 text-primary mb-3"></i>
+                                            <h5 class="card-title">@book.Title</h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">by @book.Author</h6>
+                                            <p class="card-text">
+                                                @if (book.AvailableCopies > 0)
+                                                {
+                                                    <span class="text-success fw-bold">@book.AvailableCopies Available</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-danger fw-bold">Out of Stock</span>
+                                                }
+                                            </p>
+                                            
+                                            <form asp-action="RequestBook" method="post">
+                                                <input type="hidden" name="bookId" value="@book.BookId" />
+                                                <button type="submit" class="btn btn-info text-white w-100" @(book.AvailableCopies == 0 ? "disabled" : "")>
+                                                    Request to Borrow
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

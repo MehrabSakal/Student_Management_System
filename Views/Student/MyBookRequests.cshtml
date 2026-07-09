@@ -1,0 +1,74 @@
+@model IEnumerable<StudentManagementSystem.Models.BookRequest>
+@{
+    ViewData["Title"] = "My Book Requests";
+}
+
+<div class="container page-container">
+    <div class="row">
+        <div class="wide-wrapper">
+            <div class="header-actions">
+                <h3>My Book Requests & Borrows</h3>
+                <a asp-action="Library" class="btn btn-outline-secondary">Back to Library</a>
+            </div>
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+            }
+
+            <div class="panel">
+                <div class="panel-body">
+                    @if (Model == null || !Model.Any())
+                    {
+                        <div class="alert alert-info mb-0">You have no book requests.</div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Date Requested</th>
+                                        <th>Book Title</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var request in Model)
+                                    {
+                                        <tr>
+                                            <td>@request.RequestDate.ToString("MMM dd, yyyy")</td>
+                                            <td>@request.BookTitle</td>
+                                            <td>
+                                                @if (request.Status == "Pending")
+                                                {
+                                                    <span class="badge bg-warning text-dark">Pending Approval</span>
+                                                }
+                                                else if (request.Status == "Approved")
+                                                {
+                                                    <span class="badge bg-success">Approved / Borrowed</span>
+                                                }
+                                                else if (request.Status == "Rejected")
+                                                {
+                                                    <span class="badge bg-danger">Rejected</span>
+                                                }
+                                                else if (request.Status == "Returned")
+                                                {
+                                                    <span class="badge bg-secondary">Returned</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-info">@request.Status</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

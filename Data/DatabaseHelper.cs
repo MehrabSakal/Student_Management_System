@@ -559,5 +559,193 @@ namespace StudentManagementSystem.Data
             }
             return assignments;
         }
+
+        public void AddBook(Book book)
+        {
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "add_book";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
+
+                    cmd.Parameters.Add("p_title", OracleDbType.Varchar2).Value = book.Title;
+                    cmd.Parameters.Add("p_author", OracleDbType.Varchar2).Value = book.Author;
+                    cmd.Parameters.Add("p_copies", OracleDbType.Int32).Value = book.TotalCopies;
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List<Book> GetAllBooks()
+        {
+            List<Book> books = new List<Book>();
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT book_id, title, author, total_copies, available_copies FROM books";
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            books.Add(new Book
+                            {
+                                BookId = Convert.ToInt32(reader["book_id"]),
+                                Title = reader["title"].ToString(),
+                                Author = reader["author"].ToString(),
+                                TotalCopies = Convert.ToInt32(reader["total_copies"]),
+                                AvailableCopies = Convert.ToInt32(reader["available_copies"])
+                            });
+                        }
+                    }
+                }
+            }
+            return books;
+        }
+
+        public void RequestBook(string studentId, int bookId)
+        {
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "request_book";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("p_student_id", OracleDbType.Varchar2).Value = studentId;
+                    cmd.Parameters.Add("p_book_id", OracleDbType.Int32).Value = bookId;
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List<BookRequest> GetAllPendingBookRequests()
+        {
+            List<BookRequest> requests = new List<BookRequest>();
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT br.request_id, br.student_id, s.full_name as student_name, 
+                               br.book_id, b.title as book_title, br.request_date, br.status
+                        FROM book_requests br
+                        JOIN students s ON br.student_id = s.student_id
+                        JOIN books b ON br.book_id = b.book_id
+                        WHERE br.status = 'Pending'
+                        ORDER BY br.request_date ASC";
+                    
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            requests.Add(new BookRequest
+                            {
+                                RequestId = Convert.ToInt32(reader["request_id"]),
+                                StudentId = reader["student_id"].ToString(),
+                                StudentName = reader["student_name"].ToString(),
+                                BookId = Convert.ToInt32(reader["book_id"]),
+                                BookTitle = reader["book_title"].ToString(),
+                                RequestDate = Convert.ToDateTime(reader["request_date"]),
+                                Status = reader["status"].ToString()
+                            });
+                        }
+                    }
+                }
+            }
+            return requests;
+        }
+
+        public List<BookRequest> GetStudentBookRequests(string studentId)
+        {
+            List<BookRequest> requests = new List<BookRequest>();
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT br.request_id, br.student_id, br.book_id, b.title as book_title, br.request_date, br.status
+                        FROM book_requests br
+                        JOIN books b ON br.book_id = b.book_id
+                        WHERE br.student_id = :student_id
+                        ORDER BY br.request_date DESC";
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("student_id", OracleDbType.Varchar2).Value = studentId;
+
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            requests.Add(new BookRequest
+                            {
+                                RequestId = Convert.ToInt32(reader["request_id"]),
+                                StudentId = reader["student_id"].ToString(),
+                                BookId = Convert.ToInt32(reader["book_id"]),
+                                BookTitle = reader["book_title"].ToString(),
+                                RequestDate = Convert.ToDateTime(reader["request_date"]),
+                                Status = reader["status"].ToString()
+                            });
+                        }
+                    }
+                }
+            }
+            return requests;
+        }
+
+        public void ApproveBookRequest(int requestId)
+        {
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "approve_book_request";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("p_request_id", OracleDbType.Int32).Value = requestId;
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void RejectBookRequest(int requestId)
+        {
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "reject_book_request";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("p_request_id", OracleDbType.Int32).Value = requestId;
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void ReturnBook(int requestId)
+        {
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "return_book";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("p_request_id", OracleDbType.Int32).Value = requestId;
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }

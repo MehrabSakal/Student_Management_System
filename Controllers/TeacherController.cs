@@ -57,14 +57,12 @@ namespace StudentManagementSystem.Controllers
             {
                 model.TeacherId = User.FindFirstValue("UserId");
                 
-                // Add assignment to db
                 _dbHelper.AddAssignment(model);
                 TempData["SuccessMessage"] = "Assignment added successfully!";
                 return RedirectToAction("Dashboard");
             }
             catch (Exception ex)
             {
-                // Handle Oracle specific errors for assignment types
                 if (ex.Message.Contains("ORA-20004"))
                 {
                     TempData["ErrorMessage"] = "Theory classes can only have Assignments, not Projects.";

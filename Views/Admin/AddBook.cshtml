@@ -1,0 +1,42 @@
+@model StudentManagementSystem.Models.Book
+@{
+    ViewData["Title"] = "Add Book";
+}
+
+<div class="container page-container">
+    <div class="row">
+        <div class="centered-wrapper">
+            <div class="panel">
+                <div class="panel-header-info">
+                    <h3 class="mb-0">Add New Book to Library</h3>
+                </div>
+                <div class="panel-body">
+                    @if (ViewBag.ErrorMessage != null)
+                    {
+                        <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+                    }
+
+                    <form asp-action="AddBook" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">Book Title</label>
+                            <input type="text" class="form-control" asp-for="Title" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Author Name</label>
+                            <input type="text" class="form-control" asp-for="Author" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Total Copies</label>
+                            <input type="number" class="form-control" asp-for="TotalCopies" min="1" required />
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-info text-white">Add Book</button>
+                            <a asp-action="Library" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

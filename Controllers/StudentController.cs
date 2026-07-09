@@ -109,5 +109,56 @@ namespace StudentManagementSystem.Controllers
                 return RedirectToAction("Dashboard");
             }
         }
+        public IActionResult Library()
+        {
+            try
+            {
+                var books = _dbHelper.GetAllBooks();
+                return View(books);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error fetching books: " + ex.Message;
+                return View(new System.Collections.Generic.List<Models.Book>());
+            }
+        }
+
+        [HttpPost]
+        public IActionResult RequestBook(int bookId)
+        {
+            try
+            {
+                string studentId = User.FindFirstValue("UserId");
+                _dbHelper.RequestBook(studentId, bookId);
+                TempData["SuccessMessage"] = "Book requested successfully! Awaiting admin approval.";
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("ORA-20007"))
+                {
+                    TempData["ErrorMessage"] = "This book is currently out of stock.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Error requesting book: " + ex.Message;
+                }
+            }
+            return RedirectToAction("Library");
+        }
+
+        public IActionResult MyBookRequests()
+        {
+            try
+            {
+                string studentId = User.FindFirstValue("UserId");
+                var requests = _dbHelper.GetStudentBookRequests(studentId);
+                return View(requests);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error fetching your requests: " + ex.Message;
+                return View(new System.Collections.Generic.List<Models.BookRequest>());
+            }
+        }
     }
 }

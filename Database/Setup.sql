@@ -24,6 +24,7 @@ EXCEPTION WHEN OTHERS THEN NULL;
 END;
 /
 
+
 BEGIN
    EXECUTE IMMEDIATE 'DROP TABLE teachers CASCADE CONSTRAINTS';
 EXCEPTION WHEN OTHERS THEN NULL;
@@ -306,7 +307,7 @@ END;
 /
 
 CREATE TABLE assignments (
-    assignment_id NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    assignment_id NUMBER PRIMARY KEY,
     course_no VARCHAR2(20) NOT NULL,
     teacher_id VARCHAR2(20) NOT NULL,
     title VARCHAR2(100) NOT NULL,
@@ -317,6 +318,7 @@ CREATE TABLE assignments (
     CONSTRAINT fk_assignment_teacher FOREIGN KEY (teacher_id) REFERENCES teachers(teacher_id) ON DELETE CASCADE
 );
 /
+
 
 CREATE OR REPLACE PROCEDURE add_assignment (
     p_course_no IN assignments.course_no%TYPE,
@@ -330,26 +332,23 @@ IS
     v_course_type courses.course_type%TYPE;
     v_teacher_dept teachers.dept_id%TYPE;
     v_course_dept courses.dept_id%TYPE;
+    v_new_id NUMBER;
 BEGIN
-    -- Verify teacher exists and get department
     SELECT dept_id INTO v_teacher_dept FROM teachers WHERE teacher_id = p_teacher_id;
     
-    -- Verify course exists and get type and department
     SELECT course_type, dept_id INTO v_course_type, v_course_dept FROM courses WHERE course_no = p_course_no;
     
-    -- Validate department (teacher can only give assignments for courses in their department)
     IF v_teacher_dept != v_course_dept THEN
         RAISE_APPLICATION_ERROR(-20005, 'You can only give assignments for courses in your department.');
     END IF;
     
-    -- Validate assignment type based on course type
     IF v_course_type = 'Theory' AND p_assignment_type = 'Project' THEN
         RAISE_APPLICATION_ERROR(-20004, 'Theory classes can only have Assignments, not Projects.');
     END IF;
     
-    -- Insert the assignment
-    INSERT INTO assignments (course_no, teacher_id, title, description, assignment_type, due_date)
-    VALUES (p_course_no, p_teacher_id, p_title, p_description, p_assignment_type, p_due_date);
+    SELECT NVL(MAX(assignment_id), 0) + 1 INTO v_new_id FROM assignments;
+    INSERT INTO assignments (assignment_id, course_no, teacher_id, title, description, assignment_type, due_date)
+    VALUES (v_new_id, p_course_no, p_teacher_id, p_title, p_description, p_assignment_type, p_due_date);
     
     COMMIT;
 EXCEPTION
@@ -357,5 +356,128 @@ EXCEPTION
         RAISE_APPLICATION_ERROR(-20006, 'Course or Teacher not found.');
     WHEN OTHERS THEN
         RAISE;
+END;
+/
+
+BEGIN
+   EXECUTE IMMEDIATE 'DROP TABLE book_requests CASCADE CONSTRAINTS';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+
+BEGIN
+   EXECUTE IMMEDIATE 'DROP TABLE books CASCADE CONSTRAINTS';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+
+CREATE TABLE books (
+    book_id NUMBER PRIMARY KEY,
+    title VARCHAR2(200) NOT NULL,
+    author VARCHAR2(100) NOT NULL,
+    total_copies NUMBER NOT NULL,
+    available_copies NUMBER NOT NULL
+);
+/
+
+
+CREATE TABLE book_requests (
+    request_id NUMBER PRIMARY KEY,
+    student_id VARCHAR2(20) NOT NULL,
+    book_id NUMBER NOT NULL,
+    request_date DATE DEFAULT SYSDATE,
+    status VARCHAR2(20) DEFAULT 'Pending' CHECK (status IN ('Pending', 'Approved', 'Rejected', 'Returned')),
+    CONSTRAINT fk_br_student FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+    CONSTRAINT fk_br_book FOREIGN KEY (book_id) REFERENCES books(book_id) ON DELETE CASCADE
+);
+/
+
+
+CREATE OR REPLACE PROCEDURE add_book (
+    p_title IN VARCHAR2,
+    p_author IN VARCHAR2,
+    p_copies IN NUMBER
+)
+IS
+    v_new_id NUMBER;
+BEGIN
+    SELECT NVL(MAX(book_id), 0) + 1 INTO v_new_id FROM books;
+    INSERT INTO books (book_id, title, author, total_copies, available_copies)
+    VALUES (v_new_id, p_title, p_author, p_copies, p_copies);
+    COMMIT;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE request_book (
+    p_student_id IN VARCHAR2,
+    p_book_id IN NUMBER
+)
+IS
+    v_available NUMBER;
+    v_new_id NUMBER;
+BEGIN
+    SELECT available_copies INTO v_available FROM books WHERE book_id = p_book_id;
+    
+    IF v_available > 0 THEN
+        SELECT NVL(MAX(request_id), 0) + 1 INTO v_new_id FROM book_requests;
+        INSERT INTO book_requests (request_id, student_id, book_id) VALUES (v_new_id, p_student_id, p_book_id);
+        COMMIT;
+    ELSE
+        RAISE_APPLICATION_ERROR(-20007, 'Book is currently out of stock.');
+    END IF;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE approve_book_request (
+    p_request_id IN NUMBER
+)
+IS
+    v_book_id NUMBER;
+    v_status VARCHAR2(20);
+    v_available NUMBER;
+BEGIN
+    SELECT book_id, status INTO v_book_id, v_status FROM book_requests WHERE request_id = p_request_id;
+    
+    IF v_status = 'Pending' THEN
+        SELECT available_copies INTO v_available FROM books WHERE book_id = v_book_id FOR UPDATE;
+        IF v_available > 0 THEN
+            UPDATE books SET available_copies = available_copies - 1 WHERE book_id = v_book_id;
+            UPDATE book_requests SET status = 'Approved' WHERE request_id = p_request_id;
+            COMMIT;
+        ELSE
+            RAISE_APPLICATION_ERROR(-20008, 'Cannot approve: Book is out of stock.');
+        END IF;
+    ELSE
+        RAISE_APPLICATION_ERROR(-20009, 'Request is not in Pending state.');
+    END IF;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE reject_book_request (
+    p_request_id IN NUMBER
+)
+IS
+BEGIN
+    UPDATE book_requests SET status = 'Rejected' WHERE request_id = p_request_id AND status = 'Pending';
+    COMMIT;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE return_book (
+    p_request_id IN NUMBER
+)
+IS
+    v_book_id NUMBER;
+    v_status VARCHAR2(20);
+BEGIN
+    SELECT book_id, status INTO v_book_id, v_status FROM book_requests WHERE request_id = p_request_id;
+    
+    IF v_status = 'Approved' THEN
+        UPDATE books SET available_copies = available_copies + 1 WHERE book_id = v_book_id;
+        UPDATE book_requests SET status = 'Returned' WHERE request_id = p_request_id;
+        COMMIT;
+    ELSE
+        RAISE_APPLICATION_ERROR(-20010, 'Cannot return: Book was not approved/borrowed.');
+    END IF;
 END;
 /

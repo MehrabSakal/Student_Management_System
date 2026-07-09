@@ -232,7 +232,97 @@ namespace StudentManagementSystem.Controllers
 
         public IActionResult Library()
         {
-            return Content("Library Management (To be built next week)");
+            try
+            {
+                var books = _dbHelper.GetAllBooks();
+                return View(books);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Error fetching books: " + ex.Message;
+                return View(new System.Collections.Generic.List<Book>());
+            }
+        }
+
+        [HttpGet]
+        public IActionResult AddBook()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddBook(Book book)
+        {
+            try
+            {
+                _dbHelper.AddBook(book);
+                TempData["SuccessMessage"] = "Book added successfully!";
+                return RedirectToAction("Library");
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Error adding book: " + ex.Message;
+                return View(book);
+            }
+        }
+
+        public IActionResult PendingRequests()
+        {
+            try
+            {
+                var requests = _dbHelper.GetAllPendingBookRequests();
+                return View(requests);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "Error fetching requests: " + ex.Message;
+                return View(new System.Collections.Generic.List<BookRequest>());
+            }
+        }
+
+        [HttpPost]
+        public IActionResult ApproveRequest(int requestId)
+        {
+            try
+            {
+                _dbHelper.ApproveBookRequest(requestId);
+                TempData["SuccessMessage"] = "Request approved successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error approving request: " + ex.Message;
+            }
+            return RedirectToAction("PendingRequests");
+        }
+
+        [HttpPost]
+        public IActionResult RejectRequest(int requestId)
+        {
+            try
+            {
+                _dbHelper.RejectBookRequest(requestId);
+                TempData["SuccessMessage"] = "Request rejected successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error rejecting request: " + ex.Message;
+            }
+            return RedirectToAction("PendingRequests");
+        }
+
+        [HttpPost]
+        public IActionResult ReturnBook(int requestId)
+        {
+            try
+            {
+                _dbHelper.ReturnBook(requestId);
+                TempData["SuccessMessage"] = "Book returned successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error returning book: " + ex.Message;
+            }
+            return RedirectToAction("Library");
         }
 
         [HttpGet]
