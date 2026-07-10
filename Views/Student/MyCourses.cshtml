@@ -1,0 +1,75 @@
+@model IEnumerable<StudentManagementSystem.Models.Course>
+@{
+    ViewData["Title"] = "My Registered Courses";
+}
+
+<div class="container page-container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-header-info d-flex justify-content-between align-items-center">
+                    <h3 class="mb-0">My Registered Courses</h3>
+                    <a asp-action="Dashboard" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+                <div class="panel-body p-0">
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger m-3">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Course No</th>
+                                    <th>Course Name</th>
+                                    <th>Department ID</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var course in Model)
+                                    {
+                                        <tr>
+                                            <td>@course.CourseNo</td>
+                                            <td>@course.CourseName</td>
+                                            <td>@course.DeptId</td>
+                                            <td>
+                                                @if (course.CourseType == "Theory")
+                                                {
+                                                    <span class="badge bg-primary">Theory</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-info text-dark">Lab</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4">
+                                            <div class="text-muted">
+                                                <i class="bi bi-journal-x" style="font-size: 2rem;"></i>
+                                                <p class="mt-2">You haven't registered for any courses yet.</p>
+                                                <a asp-action="RegisterCourses" class="btn btn-primary mt-2">Register Now</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

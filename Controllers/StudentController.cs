@@ -23,6 +23,21 @@ namespace StudentManagementSystem.Controllers
             return View();
         }
 
+        public IActionResult MyCourses()
+        {
+            try
+            {
+                string studentId = User.FindFirstValue("UserId");
+                var courses = _dbHelper.GetMyCourses(studentId);
+                return View(courses);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error loading your courses: " + ex.Message;
+                return RedirectToAction("Dashboard");
+            }
+        }
+
         [HttpGet]
         public IActionResult RegisterCourses()
         {

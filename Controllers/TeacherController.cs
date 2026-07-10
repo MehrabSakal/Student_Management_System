@@ -25,6 +25,21 @@ namespace StudentManagementSystem.Controllers
             return View();
         }
 
+        public IActionResult MyAdvisees()
+        {
+            try
+            {
+                string teacherId = User.FindFirstValue("UserId");
+                var advisees = _dbHelper.GetAdvisees(teacherId);
+                return View(advisees);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error loading advisees: " + ex.Message;
+                return RedirectToAction("Dashboard");
+            }
+        }
+
         [HttpGet]
         public IActionResult GiveAssignment()
         {

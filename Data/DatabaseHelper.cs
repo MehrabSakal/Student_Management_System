@@ -244,6 +244,40 @@ namespace StudentManagementSystem.Data
             }
         }
 
+        public List<Student> GetAdvisees(string teacherId)
+        {
+            List<Student> advisees = new List<Student>();
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT student_id, full_name, email, phone, dept_id, address, advisor_id, password FROM students WHERE advisor_id = :advisor_id";
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("advisor_id", OracleDbType.Varchar2).Value = teacherId;
+
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            advisees.Add(new Student
+                            {
+                                StudentId = reader["student_id"].ToString(),
+                                FullName = reader["full_name"].ToString(),
+                                Email = reader["email"].ToString(),
+                                Phone = reader["phone"].ToString(),
+                                DeptId = reader["dept_id"].ToString(),
+                                Address = reader["address"].ToString(),
+                                AdvisorId = reader["advisor_id"].ToString(),
+                                Password = reader["password"].ToString()
+                            });
+                        }
+                    }
+                }
+            }
+            return advisees;
+        }
+
         public void UpdateTeacher(Teacher teacher)
         {
             using (OracleConnection con = new OracleConnection(_connectionString))
@@ -436,6 +470,40 @@ namespace StudentManagementSystem.Data
                     cmd.ExecuteNonQuery();
                 }
             }
+        }
+
+        public List<Course> GetMyCourses(string studentId)
+        {
+            List<Course> courses = new List<Course>();
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT c.course_no, c.course_name, c.dept_id, c.course_type 
+                        FROM courses c
+                        JOIN student_courses sc ON c.course_no = sc.course_no
+                        WHERE sc.student_id = :student_id";
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("student_id", OracleDbType.Varchar2).Value = studentId;
+
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            courses.Add(new Course
+                            {
+                                CourseNo = reader["course_no"].ToString(),
+                                CourseName = reader["course_name"].ToString(),
+                                DeptId = reader["dept_id"].ToString(),
+                                CourseType = reader["course_type"].ToString()
+                            });
+                        }
+                    }
+                }
+            }
+            return courses;
         }
 
         public List<Course> GetCoursesByDepartment(string deptId)

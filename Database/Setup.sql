@@ -481,3 +481,54 @@ BEGIN
     END IF;
 END;
 /
+
+
+CREATE OR REPLACE VIEW student_details_view AS
+SELECT s.student_id, s.full_name, s.email, s.phone,
+       d.dept_name,
+       t.first_name || ' ' || t.last_name AS advisor_name
+FROM students s
+LEFT JOIN department d ON s.dept_id = d.dept_id
+LEFT JOIN teachers t ON s.advisor_id = t.teacher_id;
+/
+
+CREATE OR REPLACE VIEW course_enrollment_view AS
+SELECT c.course_no, c.course_name, d.dept_name, COUNT(sc.student_id) as enrolled_students
+FROM courses c
+LEFT JOIN department d ON c.dept_id = d.dept_id
+LEFT JOIN student_courses sc ON c.course_no = sc.course_no
+GROUP BY c.course_no, c.course_name, d.dept_name;
+/
+
+
+CREATE OR REPLACE TRIGGER update_dept_student_count
+AFTER INSERT OR DELETE OR UPDATE OF dept_id ON students
+FOR EACH ROW
+BEGIN
+    IF INSERTING THEN
+        IF :NEW.dept_id IS NOT NULL THEN
+            UPDATE department SET no_of_students = NVL(no_of_students, 0) + 1 WHERE dept_id = :NEW.dept_id;
+        END IF;
+    ELSIF DELETING THEN
+        IF :OLD.dept_id IS NOT NULL THEN
+            UPDATE department SET no_of_students = NVL(no_of_students, 0) - 1 WHERE dept_id = :OLD.dept_id;
+        END IF;
+    ELSIF UPDATING THEN
+        IF :OLD.dept_id IS NOT NULL THEN
+            UPDATE department SET no_of_students = NVL(no_of_students, 0) - 1 WHERE dept_id = :OLD.dept_id;
+        END IF;
+        IF :NEW.dept_id IS NOT NULL THEN
+            UPDATE department SET no_of_students = NVL(no_of_students, 0) + 1 WHERE dept_id = :NEW.dept_id;
+        END IF;
+    END IF;
+END;
+/
+
+-- Trigger to auto-format student names (capitalize first letters)
+CREATE OR REPLACE TRIGGER format_student_name
+BEFORE INSERT OR UPDATE ON students
+FOR EACH ROW
+BEGIN
+    :NEW.full_name := INITCAP(:NEW.full_name);
+END;
+/
