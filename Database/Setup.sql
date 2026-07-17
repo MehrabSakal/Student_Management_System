@@ -253,6 +253,8 @@ CREATE TABLE courses (
 CREATE TABLE student_courses (
     student_id VARCHAR2(20),
     course_no VARCHAR2(20),
+    marks NUMBER(5,2),
+    gpa NUMBER(3,2),
     PRIMARY KEY (student_id, course_no),
     CONSTRAINT fk_enroll_student FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
     CONSTRAINT fk_enroll_course FOREIGN KEY (course_no) REFERENCES courses(course_no) ON DELETE CASCADE
@@ -602,6 +604,77 @@ CREATE OR REPLACE PROCEDURE reject_research_request (
 IS
 BEGIN
     UPDATE research_requests SET status = 'Rejected' WHERE request_id = p_request_id AND status = 'Pending';
+    COMMIT;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE get_teacher_advisees (
+    p_teacher_id IN students.advisor_id%TYPE,
+    p_recordset OUT SYS_REFCURSOR
+)
+IS
+BEGIN
+    OPEN p_recordset FOR
+        SELECT student_id, full_name, email, phone, dept_id, address, advisor_id, password
+        FROM students
+        WHERE advisor_id = p_teacher_id;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE generate_department_report (
+    p_dept_id IN department.dept_id%TYPE
+)
+IS
+    CURSOR c_students IS
+        SELECT full_name, email
+        FROM students
+        WHERE dept_id = p_dept_id;
+    
+    v_full_name students.full_name%TYPE;
+    v_email students.email%TYPE;
+    v_count NUMBER := 0;
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('--- Student Report for Department: ' || p_dept_id || ' ---');
+    
+    OPEN c_students;
+    LOOP
+        FETCH c_students INTO v_full_name, v_email;
+        EXIT WHEN c_students%NOTFOUND;
+        
+        DBMS_OUTPUT.PUT_LINE('Student: ' || v_full_name || ' | Email: ' || v_email);
+        v_count := v_count + 1;
+    END LOOP;
+    CLOSE c_students;
+    
+    DBMS_OUTPUT.PUT_LINE('Total Students: ' || v_count);
+END;
+/
+
+-- Procedure to assign marks and calculate GPA
+CREATE OR REPLACE PROCEDURE assign_marks (
+    p_student_id IN VARCHAR2,
+    p_course_no IN VARCHAR2,
+    p_marks IN NUMBER
+)
+IS
+    v_gpa NUMBER(3,2);
+BEGIN
+    IF p_marks >= 80 THEN v_gpa := 4.00;
+    ELSIF p_marks >= 75 THEN v_gpa := 3.75;
+    ELSIF p_marks >= 70 THEN v_gpa := 3.50;
+    ELSIF p_marks >= 65 THEN v_gpa := 3.25;
+    ELSIF p_marks >= 60 THEN v_gpa := 3.00;
+    ELSIF p_marks >= 55 THEN v_gpa := 2.75;
+    ELSIF p_marks >= 50 THEN v_gpa := 2.50;
+    ELSIF p_marks >= 45 THEN v_gpa := 2.25;
+    ELSIF p_marks >= 40 THEN v_gpa := 2.00;
+    ELSE v_gpa := 0.00;
+    END IF;
+
+    UPDATE student_courses 
+    SET marks = p_marks, gpa = v_gpa 
+    WHERE student_id = p_student_id AND course_no = p_course_no;
+    
     COMMIT;
 END;
 /

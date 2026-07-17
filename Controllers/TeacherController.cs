@@ -153,5 +153,51 @@ namespace StudentManagementSystem.Controllers
             }
             return RedirectToAction("ResearchRequests");
         }
+
+        public IActionResult ManageResults()
+        {
+            try
+            {
+                var courses = _dbHelper.GetAllCourses();
+                return View(courses);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error loading courses: " + ex.Message;
+                return RedirectToAction("Dashboard");
+            }
+        }
+
+        public IActionResult CourseResults(string courseNo)
+        {
+            if (string.IsNullOrEmpty(courseNo)) return RedirectToAction("ManageResults");
+            
+            try
+            {
+                ViewBag.CourseNo = courseNo;
+                var students = _dbHelper.GetEnrolledStudentsForCourse(courseNo);
+                return View(students);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error loading students for course: " + ex.Message;
+                return RedirectToAction("ManageResults");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult SaveMarks(string courseNo, string studentId, double marks)
+        {
+            try
+            {
+                _dbHelper.AssignMarks(studentId, courseNo, marks);
+                TempData["SuccessMessage"] = "Marks saved successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error saving marks: " + ex.Message;
+            }
+            return RedirectToAction("CourseResults", new { courseNo = courseNo });
+        }
     }
 }

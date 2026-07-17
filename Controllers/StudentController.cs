@@ -100,6 +100,22 @@ namespace StudentManagementSystem.Controllers
                 return View(updatedStudent);
             }
         }
+
+        public IActionResult MyResults()
+        {
+            try
+            {
+                string studentId = User.FindFirstValue("UserId");
+                var results = _dbHelper.GetStudentResults(studentId);
+                return View(results);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error loading your results: " + ex.Message;
+                return RedirectToAction("Dashboard");
+            }
+        }
+
         public IActionResult MyCourses()
         {
             try

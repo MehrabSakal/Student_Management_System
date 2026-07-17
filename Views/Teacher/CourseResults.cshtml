@@ -1,0 +1,81 @@
+@model IEnumerable<StudentManagementSystem.Models.StudentResult>
+@{
+    ViewData["Title"] = "Course Results";
+    string courseNo = ViewBag.CourseNo;
+}
+
+<div class="container page-container mt-4">
+    <div class="panel">
+        <div class="panel-header-info d-flex justify-content-between align-items-center">
+            <h3 class="mb-0"><i class="bi bi-card-checklist me-2"></i>Results for @courseNo</h3>
+        </div>
+        <div class="panel-body">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+            }
+
+            @if (!Model.Any())
+            {
+                <p class="text-muted">No students are currently enrolled in this course.</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th class="text-center">Current Marks</th>
+                                <th class="text-center">GPA / Grade</th>
+                                <th>Assign Marks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var student in Model)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@student.StudentId</td>
+                                    <td>@student.StudentName</td>
+                                    <td class="text-center text-primary fw-bold">
+                                        @(student.Marks.HasValue ? student.Marks.Value.ToString("0.00") : "-")
+                                    </td>
+                                    <td class="text-center">
+                                        @if (student.GPA.HasValue)
+                                        {
+                                            <span class="badge @(student.GPA.Value >= 3.0 ? "bg-success" : "bg-warning text-dark")">
+                                                @student.GPA.Value.ToString("0.00") (@student.Grade)
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">Not Graded</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <form asp-action="SaveMarks" method="post" class="d-flex gap-2 align-items-center">
+                                            <input type="hidden" name="courseNo" value="@courseNo" />
+                                            <input type="hidden" name="studentId" value="@student.StudentId" />
+                                            <input type="number" step="0.01" min="0" max="100" name="marks" class="form-control form-control-sm" style="width: 100px;" value="@(student.Marks)" required placeholder="0-100" />
+                                            <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+        <div class="panel-footer">
+            <a asp-action="ManageResults" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Courses
+            </a>
+        </div>
+    </div>
+</div>

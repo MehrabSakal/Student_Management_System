@@ -912,5 +912,99 @@ namespace StudentManagementSystem.Data
                 }
             }
         }
+
+        public List<StudentResult> GetEnrolledStudentsForCourse(string courseNo)
+        {
+            List<StudentResult> results = new List<StudentResult>();
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT sc.student_id, s.full_name, sc.course_no, c.course_name, sc.marks, sc.gpa
+                        FROM student_courses sc
+                        JOIN students s ON sc.student_id = s.student_id
+                        JOIN courses c ON sc.course_no = c.course_no
+                        WHERE sc.course_no = :course_no
+                        ORDER BY sc.student_id ASC";
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("course_no", OracleDbType.Varchar2).Value = courseNo;
+
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            results.Add(new StudentResult
+                            {
+                                StudentId = reader["student_id"].ToString(),
+                                StudentName = reader["full_name"].ToString(),
+                                CourseNo = reader["course_no"].ToString(),
+                                CourseName = reader["course_name"].ToString(),
+                                Marks = reader["marks"] != DBNull.Value ? Convert.ToDouble(reader["marks"]) : (double?)null,
+                                GPA = reader["gpa"] != DBNull.Value ? Convert.ToDouble(reader["gpa"]) : (double?)null
+                            });
+                        }
+                    }
+                }
+            }
+            return results;
+        }
+
+        public void AssignMarks(string studentId, string courseNo, double marks)
+        {
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "assign_marks";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("p_student_id", OracleDbType.Varchar2).Value = studentId;
+                    cmd.Parameters.Add("p_course_no", OracleDbType.Varchar2).Value = courseNo;
+                    cmd.Parameters.Add("p_marks", OracleDbType.Decimal).Value = marks;
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List<StudentResult> GetStudentResults(string studentId)
+        {
+            List<StudentResult> results = new List<StudentResult>();
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT sc.student_id, s.full_name, sc.course_no, c.course_name, sc.marks, sc.gpa
+                        FROM student_courses sc
+                        JOIN students s ON sc.student_id = s.student_id
+                        JOIN courses c ON sc.course_no = c.course_no
+                        WHERE sc.student_id = :student_id
+                        ORDER BY sc.course_no ASC";
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("student_id", OracleDbType.Varchar2).Value = studentId;
+
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            results.Add(new StudentResult
+                            {
+                                StudentId = reader["student_id"].ToString(),
+                                StudentName = reader["full_name"].ToString(),
+                                CourseNo = reader["course_no"].ToString(),
+                                CourseName = reader["course_name"].ToString(),
+                                Marks = reader["marks"] != DBNull.Value ? Convert.ToDouble(reader["marks"]) : (double?)null,
+                                GPA = reader["gpa"] != DBNull.Value ? Convert.ToDouble(reader["gpa"]) : (double?)null
+                            });
+                        }
+                    }
+                }
+            }
+            return results;
+        }
     }
 }
