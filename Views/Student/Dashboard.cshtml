@@ -16,41 +16,48 @@
                     <hr />
                     
                     <div class="dashboard-grid">
-                        <div class="dashboard-card-wrapper" style="max-width: 33.33%; flex: 0 0 33.33%;">
-                            <a asp-action="MyCourses" class="dashboard-card">
+                        <div class="dashboard-card-wrapper">
+                            <a asp-action="MyCourses" class="dashboard-card card-blue">
                                 <i class="bi bi-book dashboard-icon icon-primary"></i>
                                 <h5 class="dashboard-card-title">My Courses</h5>
                                 <p class="dashboard-card-subtitle">View your enrolled courses</p>
                             </a>
                         </div>
-                        <div class="dashboard-card-wrapper" style="max-width: 33.33%; flex: 0 0 33.33%;">
-                            <a href="/Student/RegisterCourses" class="dashboard-card">
+                        <div class="dashboard-card-wrapper">
+                            <a href="/Student/RegisterCourses" class="dashboard-card card-green">
                                 <i class="bi bi-plus-circle dashboard-icon icon-success"></i>
                                 <h5 class="dashboard-card-title">Register Courses</h5>
                                 <p class="dashboard-card-subtitle">Browse and enroll</p>
                             </a>
                         </div>
-                        <div class="dashboard-card-wrapper" style="max-width: 33.33%; flex: 0 0 33.33%;">
-                            <div class="dashboard-card">
+                        <div class="dashboard-card-wrapper">
+                            <a asp-action="MyProfile" class="dashboard-card card-purple text-decoration-none">
                                 <i class="bi bi-person-badge dashboard-icon icon-primary"></i>
                                 <h5 class="dashboard-card-title">My Profile</h5>
                                 <p class="dashboard-card-subtitle">Update your details</p>
-                            </div>
+                            </a>
                         </div>
                     </div>
                     <div class="dashboard-grid">
-                        <div class="dashboard-card-wrapper" style="max-width: 33.33%; flex: 0 0 33.33%;">
-                            <a asp-action="ViewAssignments" class="dashboard-card">
+                        <div class="dashboard-card-wrapper">
+                            <a asp-action="ViewAssignments" class="dashboard-card card-orange">
                                 <i class="bi bi-file-earmark-text dashboard-icon icon-warning"></i>
                                 <h5 class="dashboard-card-title">My Assignments</h5>
                                 <p class="dashboard-card-subtitle">View assignments for your courses</p>
                             </a>
                         </div>
-                        <div class="dashboard-card-wrapper" style="max-width: 33.33%; flex: 0 0 33.33%;">
-                            <a asp-action="Library" class="dashboard-card">
+                        <div class="dashboard-card-wrapper">
+                            <a asp-action="Library" class="dashboard-card card-yellow">
                                 <i class="bi bi-book-half dashboard-icon icon-info"></i>
                                 <h5 class="dashboard-card-title">Library</h5>
                                 <p class="dashboard-card-subtitle">Browse and borrow books</p>
+                            </a>
+                        </div>
+                        <div class="dashboard-card-wrapper">
+                            <a asp-action="RequestResearch" class="dashboard-card card-pink">
+                                <i class="bi bi-search dashboard-icon icon-success"></i>
+                                <h5 class="dashboard-card-title">Request Research</h5>
+                                <p class="dashboard-card-subtitle">Request a supervisor</p>
                             </a>
                         </div>
                     </div>

@@ -108,5 +108,50 @@ namespace StudentManagementSystem.Controllers
                 return RedirectToAction("Dashboard");
             }
         }
+
+        public IActionResult ResearchRequests()
+        {
+            try
+            {
+                string teacherId = User.FindFirstValue("UserId");
+                var requests = _dbHelper.GetTeacherResearchRequests(teacherId);
+                return View(requests);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error loading research requests: " + ex.Message;
+                return RedirectToAction("Dashboard");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AcceptResearchRequest(int requestId)
+        {
+            try
+            {
+                _dbHelper.AcceptResearchRequest(requestId);
+                TempData["SuccessMessage"] = "Research request accepted successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error accepting request: " + ex.Message;
+            }
+            return RedirectToAction("ResearchRequests");
+        }
+
+        [HttpPost]
+        public IActionResult RejectResearchRequest(int requestId)
+        {
+            try
+            {
+                _dbHelper.RejectResearchRequest(requestId);
+                TempData["SuccessMessage"] = "Research request rejected.";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error rejecting request: " + ex.Message;
+            }
+            return RedirectToAction("ResearchRequests");
+        }
     }
 }

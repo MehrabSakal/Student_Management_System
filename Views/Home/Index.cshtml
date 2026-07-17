@@ -2,19 +2,36 @@
     ViewData["Title"] = "Select Role";
 }
 
-<div class="text-center mt-5">
-    <h1 class="display-4">Student Management System</h1>
-    <p class="lead">Please select your role to continue.</p>
+<div class="container page-container mt-5">
+    <div class="text-center mb-5">
+        <div class="mb-4">
+            <i class="bi bi-mortarboard-fill text-primary" style="font-size: 4rem;"></i>
+        </div>
+        <h1 class="display-5 fw-bold text-dark">Student Management System</h1>
+        <p class="lead text-muted">Welcome to the academic portal. Please select your role to continue.</p>
+    </div>
 
-    <div class="d-flex justify-content-center gap-4 mt-4">
-        <a href="/Account/Login?role=Admin" class="btn btn-primary btn-lg px-5 py-3">
-            <i class="bi bi-shield-lock"></i> Admin
-        </a>
-        <a href="/Account/Login?role=Teacher" class="btn btn-success btn-lg px-5 py-3">
-            <i class="bi bi-person-workspace"></i> Teacher
-        </a>
-        <a href="/Account/Login?role=Student" class="btn btn-info btn-lg px-5 py-3 text-white">
-            <i class="bi bi-person-badge"></i> Student
-        </a>
+    <div class="row justify-content-center g-4 mt-2" style="max-width: 1000px; margin: 0 auto;">
+        <div class="col-md-4 col-sm-12">
+            <a href="/Account/Login?role=Admin" class="dashboard-card card-purple text-decoration-none h-100 py-5">
+                <i class="bi bi-shield-lock dashboard-icon text-primary mb-3"></i>
+                <h4 class="fw-bold mb-2">Administrator</h4>
+                <p class="text-muted mb-0">Manage system settings, users, and overall administration.</p>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-12">
+            <a href="/Account/Login?role=Teacher" class="dashboard-card card-blue text-decoration-none h-100 py-5">
+                <i class="bi bi-person-workspace dashboard-icon text-info mb-3"></i>
+                <h4 class="fw-bold mb-2">Teacher</h4>
+                <p class="text-muted mb-0">Access classes, assignments, advisees, and research requests.</p>
+            </a>
+        </div>
+        <div class="col-md-4 col-sm-12">
+            <a href="/Account/Login?role=Student" class="dashboard-card card-green text-decoration-none h-100 py-5">
+                <i class="bi bi-person-badge dashboard-icon text-success mb-3"></i>
+                <h4 class="fw-bold mb-2">Student</h4>
+                <p class="text-muted mb-0">View courses, library, assignments, and request research.</p>
+            </a>
+        </div>
     </div>
 </div>

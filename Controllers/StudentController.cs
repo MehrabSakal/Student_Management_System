@@ -23,6 +23,83 @@ namespace StudentManagementSystem.Controllers
             return View();
         }
 
+        public IActionResult MyProfile()
+        {
+            try
+            {
+                string studentId = User.FindFirstValue("UserId");
+                var student = _dbHelper.GetStudent(studentId);
+                if (student == null)
+                {
+                    TempData["ErrorMessage"] = "Could not load profile details.";
+                    return RedirectToAction("Dashboard");
+                }
+                return View(student);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error loading your profile: " + ex.Message;
+                return RedirectToAction("Dashboard");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult EditProfile()
+        {
+            try
+            {
+                string studentId = User.FindFirstValue("UserId");
+                var student = _dbHelper.GetStudent(studentId);
+                if (student == null)
+                {
+                    TempData["ErrorMessage"] = "Could not load profile for editing.";
+                    return RedirectToAction("MyProfile");
+                }
+                return View(student);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error loading profile: " + ex.Message;
+                return RedirectToAction("MyProfile");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult EditProfile(StudentManagementSystem.Models.Student updatedStudent)
+        {
+            try
+            {
+                string studentId = User.FindFirstValue("UserId");
+                
+                // Fetch the existing student to retain uneditable fields
+                var existingStudent = _dbHelper.GetStudent(studentId);
+                if (existingStudent == null)
+                {
+                    TempData["ErrorMessage"] = "Student not found.";
+                    return RedirectToAction("MyProfile");
+                }
+
+                // Update only the allowed fields
+                existingStudent.Email = updatedStudent.Email;
+                existingStudent.Phone = updatedStudent.Phone;
+                existingStudent.Address = updatedStudent.Address;
+                
+                // If they provided a new password, update it. Otherwise keep old one.
+                if (!string.IsNullOrEmpty(updatedStudent.Password))
+                {
+                    existingStudent.Password = updatedStudent.Password;
+                }
+
+                _dbHelper.UpdateStudent(existingStudent);
+                TempData["SuccessMessage"] = "Profile updated successfully!";
+                return RedirectToAction("MyProfile");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error updating profile: " + ex.Message;
+                return View(updatedStudent);
+            }
+        }
         public IActionResult MyCourses()
         {
             try
@@ -174,6 +251,44 @@ namespace StudentManagementSystem.Controllers
                 TempData["ErrorMessage"] = "Error fetching your requests: " + ex.Message;
                 return View(new System.Collections.Generic.List<Models.BookRequest>());
             }
+        }
+
+        [HttpGet]
+        public IActionResult RequestResearch()
+        {
+            try
+            {
+                var teachers = _dbHelper.GetAllTeachers();
+                return View(teachers);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error loading teachers: " + ex.Message;
+                return RedirectToAction("Dashboard");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult RequestResearch(StudentManagementSystem.Models.ResearchRequest model)
+        {
+            try
+            {
+                string studentId = User.FindFirstValue("UserId");
+                _dbHelper.RequestResearch(studentId, model.TeacherId, model.ResearchInterest, model.ResearchDescription, model.PreviousExperience);
+                TempData["SuccessMessage"] = "Research request submitted successfully! Awaiting teacher approval.";
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message.Contains("ORA-20011"))
+                {
+                    TempData["ErrorMessage"] = "You already have a pending research request.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Error submitting request: " + ex.Message;
+                }
+            }
+            return RedirectToAction("Dashboard");
         }
     }
 }

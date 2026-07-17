@@ -1,0 +1,60 @@
+@model IEnumerable<StudentManagementSystem.Models.Teacher>
+@{
+    ViewData["Title"] = "Request Research";
+}
+
+<div class="container page-container">
+    <div class="row">
+        <div class="centered-wrapper">
+            <div class="panel">
+                <div class="panel-header-success">
+                    <h3 class="mb-0">Request for Research</h3>
+                </div>
+                <div class="panel-body">
+                    <p class="text-muted mb-4">Select a teacher to request them as your research supervisor.</p>
+
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                    }
+
+                    <form asp-action="RequestResearch" method="post">
+                        <div class="form-group mb-4">
+                            <label for="teacherId" class="form-label">Select Teacher</label>
+                            <select name="TeacherId" id="teacherId" class="form-control form-control-lg" required>
+                                <option value="">-- Select a Teacher --</option>
+                                @if (Model != null)
+                                {
+                                    foreach (var teacher in Model)
+                                    {
+                                        <option value="@teacher.TeacherId">@teacher.FirstName @teacher.LastName (@teacher.Designation - @teacher.DeptId)</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="ResearchInterest" class="form-label">Research Interest</label>
+                            <input type="text" name="ResearchInterest" id="ResearchInterest" class="form-control" placeholder="E.g. Machine Learning, Web Development" />
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="ResearchDescription" class="form-label">Research Description</label>
+                            <textarea name="ResearchDescription" id="ResearchDescription" class="form-control" rows="3" placeholder="Briefly describe your proposed research topic..."></textarea>
+                        </div>
+                        <div class="form-group mb-4">
+                            <label for="PreviousExperience" class="form-label">Previous Experience</label>
+                            <textarea name="PreviousExperience" id="PreviousExperience" class="form-control" rows="2" placeholder="Any relevant past projects or coursework..."></textarea>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">Submit Request</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel-footer">
+                    <a asp-action="Dashboard" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -532,3 +532,76 @@ BEGIN
     :NEW.full_name := INITCAP(:NEW.full_name);
 END;
 /
+
+BEGIN
+   EXECUTE IMMEDIATE 'DROP TABLE research_requests CASCADE CONSTRAINTS';
+EXCEPTION WHEN OTHERS THEN NULL;
+END;
+/
+
+CREATE TABLE research_requests (
+    request_id NUMBER PRIMARY KEY,
+    student_id VARCHAR2(20) NOT NULL,
+    teacher_id VARCHAR2(20) NOT NULL,
+    research_interest VARCHAR2(500),
+    research_description VARCHAR2(2000),
+    previous_experience VARCHAR2(2000),
+    request_date DATE DEFAULT SYSDATE,
+    status VARCHAR2(20) DEFAULT 'Pending' CHECK (status IN ('Pending', 'Accepted', 'Rejected')),
+    CONSTRAINT fk_rr_student FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+    CONSTRAINT fk_rr_teacher FOREIGN KEY (teacher_id) REFERENCES teachers(teacher_id) ON DELETE CASCADE
+);
+/
+
+CREATE OR REPLACE PROCEDURE request_research (
+    p_student_id IN VARCHAR2,
+    p_teacher_id IN VARCHAR2,
+    p_research_interest IN VARCHAR2,
+    p_research_description IN VARCHAR2,
+    p_previous_experience IN VARCHAR2
+)
+IS
+    v_new_id NUMBER;
+    v_count NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_count FROM research_requests WHERE student_id = p_student_id AND status = 'Pending';
+    IF v_count > 0 THEN
+        RAISE_APPLICATION_ERROR(-20011, 'You already have a pending research request.');
+    END IF;
+
+    SELECT NVL(MAX(request_id), 0) + 1 INTO v_new_id FROM research_requests;
+    INSERT INTO research_requests (request_id, student_id, teacher_id, research_interest, research_description, previous_experience) 
+    VALUES (v_new_id, p_student_id, p_teacher_id, p_research_interest, p_research_description, p_previous_experience);
+    COMMIT;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE accept_research_request (
+    p_request_id IN NUMBER
+)
+IS
+    v_student_id VARCHAR2(20);
+    v_teacher_id VARCHAR2(20);
+    v_status VARCHAR2(20);
+BEGIN
+    SELECT student_id, teacher_id, status INTO v_student_id, v_teacher_id, v_status FROM research_requests WHERE request_id = p_request_id;
+    
+    IF v_status = 'Pending' THEN
+        UPDATE research_requests SET status = 'Accepted' WHERE request_id = p_request_id;
+        UPDATE students SET advisor_id = v_teacher_id WHERE student_id = v_student_id;
+        COMMIT;
+    ELSE
+        RAISE_APPLICATION_ERROR(-20012, 'Request is not in Pending state.');
+    END IF;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE reject_research_request (
+    p_request_id IN NUMBER
+)
+IS
+BEGIN
+    UPDATE research_requests SET status = 'Rejected' WHERE request_id = p_request_id AND status = 'Pending';
+    COMMIT;
+END;
+/

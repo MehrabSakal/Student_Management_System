@@ -106,4 +106,4 @@ F:\Web Lab\Student_Management_System\obj\Debug\net10.0\StudentManagementSystem.p
 F:\Web Lab\Student_Management_System\obj\Debug\net10.0\StudentManagementSystem.genruntimeconfig.cache
 F:\Web Lab\Student_Management_System\obj\Debug\net10.0\ref\StudentManagementSystem.dll
 F:\Web Lab\Student_Management_System\obj\Debug\net10.0\StudentManagementSystem.sourcelink.json
-F:\Web Lab\Student_Management_System\obj\Debug\net10.0\compressed\6tjizv99g7-{0}-pm6e177sad-pm6e177sad.gz
+F:\Web Lab\Student_Management_System\obj\Debug\net10.0\compressed\6tjizv99g7-{0}-xsvs69fun6-xsvs69fun6.gz

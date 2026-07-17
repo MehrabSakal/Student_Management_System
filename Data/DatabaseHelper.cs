@@ -815,5 +815,102 @@ namespace StudentManagementSystem.Data
                 }
             }
         }
+
+        public void RequestResearch(string studentId, string teacherId, string researchInterest, string researchDescription, string previousExperience)
+        {
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "request_research";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("p_student_id", OracleDbType.Varchar2).Value = studentId;
+                    cmd.Parameters.Add("p_teacher_id", OracleDbType.Varchar2).Value = teacherId;
+                    cmd.Parameters.Add("p_research_interest", OracleDbType.Varchar2).Value = (object)researchInterest ?? DBNull.Value;
+                    cmd.Parameters.Add("p_research_description", OracleDbType.Varchar2).Value = (object)researchDescription ?? DBNull.Value;
+                    cmd.Parameters.Add("p_previous_experience", OracleDbType.Varchar2).Value = (object)previousExperience ?? DBNull.Value;
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List<ResearchRequest> GetTeacherResearchRequests(string teacherId)
+        {
+            List<ResearchRequest> requests = new List<ResearchRequest>();
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT rr.request_id, rr.student_id, s.full_name as student_name, 
+                               rr.teacher_id, t.first_name || ' ' || t.last_name as teacher_name, 
+                               rr.research_interest, rr.research_description, rr.previous_experience,
+                               rr.request_date, rr.status
+                        FROM research_requests rr
+                        JOIN students s ON rr.student_id = s.student_id
+                        JOIN teachers t ON rr.teacher_id = t.teacher_id
+                        WHERE rr.teacher_id = :teacher_id AND rr.status = 'Pending'
+                        ORDER BY rr.request_date ASC";
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("teacher_id", OracleDbType.Varchar2).Value = teacherId;
+
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            requests.Add(new ResearchRequest
+                            {
+                                RequestId = Convert.ToInt32(reader["request_id"]),
+                                StudentId = reader["student_id"].ToString(),
+                                StudentName = reader["student_name"].ToString(),
+                                TeacherId = reader["teacher_id"].ToString(),
+                                TeacherName = reader["teacher_name"].ToString(),
+                                ResearchInterest = reader["research_interest"] != DBNull.Value ? reader["research_interest"].ToString() : string.Empty,
+                                ResearchDescription = reader["research_description"] != DBNull.Value ? reader["research_description"].ToString() : string.Empty,
+                                PreviousExperience = reader["previous_experience"] != DBNull.Value ? reader["previous_experience"].ToString() : string.Empty,
+                                RequestDate = Convert.ToDateTime(reader["request_date"]),
+                                Status = reader["status"].ToString()
+                            });
+                        }
+                    }
+                }
+            }
+            return requests;
+        }
+
+        public void AcceptResearchRequest(int requestId)
+        {
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "accept_research_request";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("p_request_id", OracleDbType.Int32).Value = requestId;
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void RejectResearchRequest(int requestId)
+        {
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    cmd.CommandText = "reject_research_request";
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("p_request_id", OracleDbType.Int32).Value = requestId;
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }

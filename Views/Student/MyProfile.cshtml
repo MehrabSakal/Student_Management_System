@@ -1,0 +1,57 @@
+@model StudentManagementSystem.Models.Student
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+<div class="container page-container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="panel">
+                <div class="panel-header-info">
+                    <h3 class="mb-0"><i class="bi bi-person-circle me-2"></i>My Profile</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-person-badge text-primary" style="font-size: 5rem;"></i>
+                        <h4 class="mt-2 fw-bold">@Model.FullName</h4>
+                        <p class="text-muted">Student ID: @Model.StudentId</p>
+                    </div>
+
+                    <table class="table table-borderless table-striped">
+                        <tbody>
+                            <tr>
+                                <th scope="row" class="w-50 text-end pe-4">Department ID:</th>
+                                <td><span class="badge bg-secondary">@Model.DeptId</span></td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="text-end pe-4">Email Address:</th>
+                                <td>@Model.Email</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="text-end pe-4">Phone Number:</th>
+                                <td>@Model.Phone</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="text-end pe-4">Address:</th>
+                                <td>@Model.Address</td>
+                            </tr>
+                            <tr>
+                                <th scope="row" class="text-end pe-4">Advisor ID:</th>
+                                <td>@(string.IsNullOrEmpty(Model.AdvisorId) ? "None" : Model.AdvisorId)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="panel-footer d-flex justify-content-between">
+                    <a asp-action="Dashboard" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Dashboard
+                    </a>
+                    <a asp-action="EditProfile" class="btn btn-primary">
+                        <i class="bi bi-pencil-square"></i> Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

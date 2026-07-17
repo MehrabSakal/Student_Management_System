@@ -108,3 +108,132 @@ body {
     text-align: right;
     border-radius: 0 0 0.25rem 0.25rem;
 }
+
+/* Dashboard Grid & Colors added */
+.dashboard-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.dashboard-card-wrapper {
+    flex: 1 1 calc(33.333% - 1rem);
+    min-width: 250px;
+}
+
+.dashboard-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Custom Card Colors (Dark Mode Adjusted) */
+.card-blue { background-color: #1e3a8a !important; border: 1px solid #1e40af !important; color: #bfdbfe !important; }
+.card-green { background-color: #14532d !important; border: 1px solid #166534 !important; color: #bbf7d0 !important; }
+.card-purple { background-color: #581c87 !important; border: 1px solid #6b21a8 !important; color: #e9d5ff !important; }
+.card-orange { background-color: #7c2d12 !important; border: 1px solid #9a3412 !important; color: #fed7aa !important; }
+.card-pink { background-color: #831843 !important; border: 1px solid #9d174d !important; color: #fbcfe8 !important; }
+.card-yellow { background-color: #713f12 !important; border: 1px solid #854d0e !important; color: #fef08a !important; }
+
+.card-blue:hover { box-shadow: 0 0.5rem 1rem rgba(59, 130, 246, 0.4) !important; }
+.card-green:hover { box-shadow: 0 0.5rem 1rem rgba(34, 197, 94, 0.4) !important; }
+.card-purple:hover { box-shadow: 0 0.5rem 1rem rgba(168, 85, 247, 0.4) !important; }
+.card-orange:hover { box-shadow: 0 0.5rem 1rem rgba(249, 115, 22, 0.4) !important; }
+.card-pink:hover { box-shadow: 0 0.5rem 1rem rgba(236, 72, 153, 0.4) !important; }
+.card-yellow:hover { box-shadow: 0 0.5rem 1rem rgba(234, 179, 8, 0.4) !important; }
+
+/* =========================================
+   Modern Dark Theme (Slate)
+   ========================================= */
+
+html, body {
+    background-color: #0f172a !important; /* Deep Slate Blue */
+    color: #f8fafc !important; /* Crisp off-white */
+}
+
+/* Panels and Containers */
+.panel, .card {
+    background-color: #1e293b !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3) !important;
+}
+
+.panel-header-info, .panel-header-success, .panel-footer {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+/* Text Colors */
+h1, h2, h3, h4, h5, h6, .text-dark {
+    color: #f1f5f9 !important; /* Brighter white for headings */
+}
+p, span, label, div {
+    color: inherit;
+}
+.text-muted {
+    color: #94a3b8 !important; /* Slate 400 */
+}
+
+/* Interactive Dashboard Cards */
+.dashboard-card {
+    background-color: #1e293b !important;
+    border: 1px solid #334155 !important;
+}
+
+/* Pastel Accents for Cards (Dark Mode Safe) */
+.card-blue { border-bottom: 4px solid #3b82f6 !important; }
+.card-green { border-bottom: 4px solid #22c55e !important; }
+.card-purple { border-bottom: 4px solid #a855f7 !important; }
+.card-orange { border-bottom: 4px solid #f97316 !important; }
+.card-pink { border-bottom: 4px solid #ec4899 !important; }
+.card-yellow { border-bottom: 4px solid #eab308 !important; }
+
+.dashboard-card:hover {
+    background-color: #334155 !important;
+    transform: translateY(-2px);
+    transition: all 0.2s ease-in-out;
+}
+
+/* Tables */
+.table {
+    color: #f8fafc !important;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+}
+.table td, .table th {
+    border-color: #334155 !important;
+}
+.table thead th {
+    background-color: #0f172a !important;
+    border-bottom: 2px solid #475569 !important;
+}
+.table-hover tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Form Controls */
+.form-control, .form-select {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+    border: 1px solid #475569 !important;
+}
+.form-control:focus, .form-select:focus {
+    background-color: #1e293b !important;
+    color: #ffffff !important;
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 0.25rem rgba(56, 189, 248, 0.25) !important;
+}
+
+/* Navbar override */
+.navbar {
+    background-color: #1e293b !important;
+    border-bottom: 1px solid #334155 !important;
+}
+.navbar-brand, .nav-link {
+    color: #e2e8f0 !important;
+}
+.nav-link:hover {
+    color: #38bdf8 !important;
+}
+

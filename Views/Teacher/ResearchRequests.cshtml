@@ -1,0 +1,88 @@
+@model IEnumerable<StudentManagementSystem.Models.ResearchRequest>
+@{
+    ViewData["Title"] = "Research Requests";
+}
+
+<div class="container page-container">
+    <div class="row">
+        <div class="centered-wrapper" style="max-width: 900px;">
+            <div class="panel">
+                <div class="panel-header-info">
+                    <h3 class="mb-0">Pending Research Requests</h3>
+                </div>
+                <div class="panel-body">
+                    
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                    }
+
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table custom-table">
+                                <thead>
+                                    <tr>
+                                        <th>Student ID</th>
+                                        <th>Student Info</th>
+                                        <th>Research Details</th>
+                                        <th>Request Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var req in Model)
+                                    {
+                                        <tr>
+                                            <td>@req.StudentId</td>
+                                            <td>
+                                                <strong>@req.StudentName</strong><br/>
+                                                <small class="text-muted">Interest: @req.ResearchInterest</small>
+                                            </td>
+                                            <td>
+                                                <small><strong>Desc:</strong> @req.ResearchDescription</small><br/>
+                                                <small><strong>Exp:</strong> @req.PreviousExperience</small>
+                                            </td>
+                                            <td>@req.RequestDate.ToString("dd MMM yyyy")</td>
+                                            <td>
+                                                <div class="d-flex gap-2">
+                                                    <form asp-action="AcceptResearchRequest" method="post" style="display:inline;">
+                                                        <input type="hidden" name="requestId" value="@req.RequestId" />
+                                                        <button type="submit" class="btn btn-sm btn-success">
+                                                            <i class="bi bi-check-circle"></i> Accept
+                                                        </button>
+                                                    </form>
+                                                    <form asp-action="RejectResearchRequest" method="post" style="display:inline;">
+                                                        <input type="hidden" name="requestId" value="@req.RequestId" />
+                                                        <button type="submit" class="btn btn-sm btn-danger">
+                                                            <i class="bi bi-x-circle"></i> Reject
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info mt-3">
+                            <i class="bi bi-info-circle"></i> No pending research requests found.
+                        </div>
+                    }
+                </div>
+                <div class="panel-footer">
+                    <a asp-action="Dashboard" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
