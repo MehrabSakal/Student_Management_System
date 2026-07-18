@@ -37,6 +37,7 @@
                             <th>Department Name</th>
                             <th>Faculty</th>
                             <th>No. of Students</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,13 +50,20 @@
                                     <td>@dept.DeptName</td>
                                     <td>@dept.Faculty</td>
                                     <td>@dept.NoOfStudents</td>
+                                    <td class="text-end">
+                                        <a href="/Admin/UpdateDepartment?id=@dept.DeptId" class="btn btn-sm btn-warning">Edit</a>
+                                        <form action="/Admin/DeleteDepartment" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this department?');">
+                                            <input type="hidden" name="id" value="@dept.DeptId" />
+                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                        </form>
+                                    </td>
                                 </tr>
                             }
                         }
                         else
                         {
                             <tr>
-                                <td colspan="4" class="text-center py-4 text-muted">No departments found.</td>
+                                <td colspan="5" class="text-center py-4 text-muted">No departments found.</td>
                             </tr>
                         }
                     </tbody>
