@@ -2,63 +2,125 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="container mt-4">
+<div class="container page-container">
     <div class="row">
-        <div class="col-md-3">
-            <div class="list-group">
-                <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
-                    Admin Menu
-                </a>
-                <a href="/Admin/AddDepartment" class="list-group-item list-group-item-action">Add Department</a>
-                <a href="/Admin/AddCourse" class="list-group-item list-group-item-action">Add Course</a>
-                <a href="/Admin/AddStudent" class="list-group-item list-group-item-action">Add Student</a>
-                <a href="/Admin/AddTeacher" class="list-group-item list-group-item-action">Add Teacher</a>
-                <a href="/Admin/AllDepartments" class="list-group-item list-group-item-action">See All Departments</a>
-                <a href="/Admin/AllCourses" class="list-group-item list-group-item-action">See All Courses</a>
-                <a href="/Admin/AllStudents" class="list-group-item list-group-item-action">See All Students</a>
-                <a href="/Admin/AllTeachers" class="list-group-item list-group-item-action">See All Teachers</a>
-                <a href="/Admin/Library" class="list-group-item list-group-item-action">Library Management</a>
-            </div>
-            <div class="mt-3">
-                <a href="/" class="btn btn-danger w-100">Logout</a>
-            </div>
-        </div>
-
-        <div class="col-md-9">
-            <div class="card shadow-sm">
-                <div class="card-header bg-dark text-white">
-                    <h5>Welcome, Administrator</h5>
+        <div class="centered-wrapper">
+            <div class="panel">
+                <div class="panel-header-primary">
+                    <h3 class="mb-0">Admin Dashboard</h3>
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title">Dashboard Overview</h5>
-                    <p class="card-text">Welcome to the Student Management System. From the menu on the left, you can manage students, assign courses, and approve library book requests.</p>
+                <div class="panel-body">
+                    <h4 class="card-title">Welcome, Administrator!</h4>
+                    <p class="card-text text-muted">Manage students, teachers, courses, and more from here.</p>
                     
-                    <div class="row mt-4">
+                    <hr />
+
+                    <div class="row mt-4 mb-4">
                         <div class="col-sm-4">
-                            <div class="card bg-light">
+                            <div class="card bg-light border-0 shadow-sm">
                                 <div class="card-body text-center">
-                                    <h6 class="card-title">Total Students</h6>
-                                    <h3>@ViewBag.TotalStudents</h3>
+                                    <h6 class="card-title text-muted text-uppercase mb-2">Total Students</h6>
+                                    <h3 class="text-primary mb-0">@ViewBag.TotalStudents</h3>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="card bg-light">
+                            <div class="card bg-light border-0 shadow-sm">
                                 <div class="card-body text-center">
-                                    <h6 class="card-title">Pending Book Requests</h6>
-                                    <h3>0</h3>
+                                    <h6 class="card-title text-muted text-uppercase mb-2">Pending Book Requests</h6>
+                                    <h3 class="text-warning mb-0">0</h3>
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-4">
-                            <div class="card bg-light">
+                            <div class="card bg-light border-0 shadow-sm">
                                 <div class="card-body text-center">
-                                    <h6 class="card-title">Total Teachers</h6>
-                                    <h3>@ViewBag.TotalTeachers</h3>
+                                    <h6 class="card-title text-muted text-uppercase mb-2">Total Teachers</h6>
+                                    <h3 class="text-success mb-0">@ViewBag.TotalTeachers</h3>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
+                    <h5 class="mt-4 mb-3">Management Options</h5>
+                    
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card-wrapper">
+                            <a href="/Admin/AddStudent" class="dashboard-card card-blue">
+                                <i class="bi bi-person-plus dashboard-icon icon-primary"></i>
+                                <h5 class="dashboard-card-title">Add Student</h5>
+                                <p class="dashboard-card-subtitle">Register a new student</p>
+                            </a>
+                        </div>
+                        <div class="dashboard-card-wrapper">
+                            <a href="/Admin/AllStudents" class="dashboard-card card-blue">
+                                <i class="bi bi-people dashboard-icon icon-primary"></i>
+                                <h5 class="dashboard-card-title">All Students</h5>
+                                <p class="dashboard-card-subtitle">View and manage students</p>
+                            </a>
+                        </div>
+                        <div class="dashboard-card-wrapper">
+                            <a href="/Admin/AddTeacher" class="dashboard-card card-green">
+                                <i class="bi bi-person-plus-fill dashboard-icon icon-success"></i>
+                                <h5 class="dashboard-card-title">Add Teacher</h5>
+                                <p class="dashboard-card-subtitle">Register a new teacher</p>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card-wrapper">
+                            <a href="/Admin/AllTeachers" class="dashboard-card card-green">
+                                <i class="bi bi-person-workspace dashboard-icon icon-success"></i>
+                                <h5 class="dashboard-card-title">All Teachers</h5>
+                                <p class="dashboard-card-subtitle">View and manage teachers</p>
+                            </a>
+                        </div>
+                        <div class="dashboard-card-wrapper">
+                            <a href="/Admin/AddDepartment" class="dashboard-card card-purple">
+                                <i class="bi bi-building-add dashboard-icon icon-primary"></i>
+                                <h5 class="dashboard-card-title">Add Department</h5>
+                                <p class="dashboard-card-subtitle">Create a new department</p>
+                            </a>
+                        </div>
+                        <div class="dashboard-card-wrapper">
+                            <a href="/Admin/AllDepartments" class="dashboard-card card-purple">
+                                <i class="bi bi-building dashboard-icon icon-primary"></i>
+                                <h5 class="dashboard-card-title">All Departments</h5>
+                                <p class="dashboard-card-subtitle">View all departments</p>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-grid">
+                        <div class="dashboard-card-wrapper">
+                            <a href="/Admin/AddCourse" class="dashboard-card card-orange">
+                                <i class="bi bi-journal-plus dashboard-icon icon-warning"></i>
+                                <h5 class="dashboard-card-title">Add Course</h5>
+                                <p class="dashboard-card-subtitle">Create a new course</p>
+                            </a>
+                        </div>
+                        <div class="dashboard-card-wrapper">
+                            <a href="/Admin/AllCourses" class="dashboard-card card-orange">
+                                <i class="bi bi-journal-text dashboard-icon icon-warning"></i>
+                                <h5 class="dashboard-card-title">All Courses</h5>
+                                <p class="dashboard-card-subtitle">View all courses</p>
+                            </a>
+                        </div>
+                        <div class="dashboard-card-wrapper">
+                            <a href="/Admin/Library" class="dashboard-card card-yellow">
+                                <i class="bi bi-book dashboard-icon icon-info"></i>
+                                <h5 class="dashboard-card-title">Library Management</h5>
+                                <p class="dashboard-card-subtitle">Manage library resources</p>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="panel-footer">
+                    <a href="/" class="btn btn-outline-danger">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </a>
                 </div>
             </div>
         </div>

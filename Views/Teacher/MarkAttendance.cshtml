@@ -1,0 +1,76 @@
+@model IList<StudentManagementSystem.Models.AttendanceRecord>
+@{
+    ViewData["Title"] = "Mark Attendance";
+    string courseNo = ViewBag.CourseNo;
+    DateTime attendanceDate = ViewBag.AttendanceDate;
+}
+
+<div class="container page-container mt-4">
+    <div class="panel">
+        <div class="panel-header-info d-flex justify-content-between align-items-center">
+            <div>
+                <h3 class="mb-0"><i class="bi bi-person-lines-fill me-2"></i>Attendance Roster</h3>
+                <p class="mb-0 mt-1" style="color: rgba(255,255,255,0.7);">
+                    <strong>Course:</strong> @courseNo &nbsp;|&nbsp; 
+                    <strong>Date:</strong> @attendanceDate.ToString("dd MMM yyyy")
+                </p>
+            </div>
+        </div>
+        <div class="panel-body">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-warning">No students are currently enrolled in this course.</div>
+            }
+            else
+            {
+                <form asp-action="SaveAttendance" method="post">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.Count; i++)
+                                {
+                                    <tr>
+                                        <td class="fw-bold">
+                                            @Model[i].StudentId
+                                            <input type="hidden" asp-for="@Model[i].StudentId" />
+                                            <input type="hidden" asp-for="@Model[i].CourseNo" />
+                                            <input type="hidden" asp-for="@Model[i].AttendanceDate" />
+                                        </td>
+                                        <td>@Model[i].StudentName</td>
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group">
+                                                <input type="radio" class="btn-check" name="records[@i].Status" id="present_@i" value="Present" @(Model[i].Status == "Present" ? "checked" : "") required>
+                                                <label class="btn btn-outline-success btn-sm" for="present_@i">Present</label>
+
+                                                <input type="radio" class="btn-check" name="records[@i].Status" id="absent_@i" value="Absent" @(Model[i].Status == "Absent" ? "checked" : "")>
+                                                <label class="btn btn-outline-danger btn-sm" for="absent_@i">Absent</label>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end mt-4">
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-save me-2"></i> Save Attendance
+                        </button>
+                    </div>
+                </form>
+            }
+        </div>
+        <div class="panel-footer">
+            <a asp-action="TakeAttendance" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Course Selection
+            </a>
+        </div>
+    </div>
+</div>

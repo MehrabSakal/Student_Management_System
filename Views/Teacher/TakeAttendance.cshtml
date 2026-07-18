@@ -1,0 +1,55 @@
+@model IEnumerable<StudentManagementSystem.Models.Course>
+@{
+    ViewData["Title"] = "Take Attendance";
+}
+
+<div class="container page-container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="panel">
+                <div class="panel-header-info">
+                    <h3 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Take Attendance</h3>
+                </div>
+                <div class="panel-body">
+                    <p class="text-muted">Select a course and date to record student attendance.</p>
+                    
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+                    }
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+                    }
+
+                    <form asp-action="MarkAttendance" method="post" class="mt-4">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Course</label>
+                            <select name="courseNo" class="form-select" required>
+                                <option value="">-- Select Course --</option>
+                                @foreach (var course in Model)
+                                {
+                                    <option value="@course.CourseNo">@course.CourseNo - @course.CourseName</option>
+                                }
+                            </select>
+                        </div>
+                        
+                        <div class="form-group mb-4">
+                            <label class="form-label">Date</label>
+                            <input type="date" name="attendanceDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Proceed to Mark Attendance</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel-footer text-center">
+                    <a asp-action="Dashboard" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1006,5 +1006,116 @@ namespace StudentManagementSystem.Data
             }
             return results;
         }
+
+        public List<AttendanceRecord> GetStudentsForAttendance(string courseNo, DateTime date)
+        {
+            List<AttendanceRecord> records = new List<AttendanceRecord>();
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    // Left join with attendance to see if they already have a record for this date
+                    cmd.CommandText = @"
+                        SELECT sc.student_id, s.full_name, sc.course_no, a.status 
+                        FROM student_courses sc
+                        JOIN students s ON sc.student_id = s.student_id
+                        LEFT JOIN attendance a ON sc.student_id = a.student_id AND sc.course_no = a.course_no AND a.attendance_date = :att_date
+                        WHERE sc.course_no = :course_no
+                        ORDER BY sc.student_id ASC";
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("att_date", OracleDbType.Date).Value = date;
+                    cmd.Parameters.Add("course_no", OracleDbType.Varchar2).Value = courseNo;
+
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            records.Add(new AttendanceRecord
+                            {
+                                StudentId = reader["student_id"].ToString(),
+                                StudentName = reader["full_name"].ToString(),
+                                CourseNo = reader["course_no"].ToString(),
+                                AttendanceDate = date,
+                                Status = reader["status"] != DBNull.Value ? reader["status"].ToString() : string.Empty
+                            });
+                        }
+                    }
+                }
+            }
+            return records;
+        }
+
+        public void SaveAttendance(List<AttendanceRecord> records)
+        {
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleTransaction tx = con.BeginTransaction())
+                {
+                    try
+                    {
+                        using (OracleCommand cmd = con.CreateCommand())
+                        {
+                            cmd.CommandText = "mark_attendance";
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.BindByName = true;
+
+                            // We can reuse the command in a loop
+                            foreach (var rec in records)
+                            {
+                                cmd.Parameters.Clear();
+                                cmd.Parameters.Add("p_student_id", OracleDbType.Varchar2).Value = rec.StudentId;
+                                cmd.Parameters.Add("p_course_no", OracleDbType.Varchar2).Value = rec.CourseNo;
+                                cmd.Parameters.Add("p_date", OracleDbType.Date).Value = rec.AttendanceDate;
+                                cmd.Parameters.Add("p_status", OracleDbType.Varchar2).Value = string.IsNullOrEmpty(rec.Status) ? "Absent" : rec.Status;
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                        tx.Commit();
+                    }
+                    catch
+                    {
+                        tx.Rollback();
+                        throw;
+                    }
+                }
+            }
+        }
+
+        public List<StudentAttendanceSummary> GetStudentAttendanceSummary(string studentId)
+        {
+            List<StudentAttendanceSummary> summaries = new List<StudentAttendanceSummary>();
+            using (OracleConnection con = new OracleConnection(_connectionString))
+            {
+                con.Open();
+                using (OracleCommand cmd = con.CreateCommand())
+                {
+                    // This calls our new PL/SQL function to get the percentage
+                    cmd.CommandText = @"
+                        SELECT sc.course_no, c.course_name, get_attendance_pct(:student_id, sc.course_no) as att_pct
+                        FROM student_courses sc
+                        JOIN courses c ON sc.course_no = c.course_no
+                        WHERE sc.student_id = :student_id
+                        ORDER BY sc.course_no ASC";
+                    cmd.BindByName = true;
+                    cmd.Parameters.Add("student_id", OracleDbType.Varchar2).Value = studentId;
+
+                    using (OracleDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            summaries.Add(new StudentAttendanceSummary
+                            {
+                                CourseNo = reader["course_no"].ToString(),
+                                CourseName = reader["course_name"].ToString(),
+                                AttendancePercentage = Convert.ToDouble(reader["att_pct"])
+                            });
+                        }
+                    }
+                }
+            }
+            return summaries;
+        }
     }
 }

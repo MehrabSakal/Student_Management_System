@@ -116,6 +116,21 @@ namespace StudentManagementSystem.Controllers
             }
         }
 
+        public IActionResult MyAttendance()
+        {
+            try
+            {
+                string studentId = User.FindFirstValue("UserId");
+                var attendanceSummary = _dbHelper.GetStudentAttendanceSummary(studentId);
+                return View(attendanceSummary);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error loading attendance: " + ex.Message;
+                return RedirectToAction("Dashboard");
+            }
+        }
+
         public IActionResult MyCourses()
         {
             try

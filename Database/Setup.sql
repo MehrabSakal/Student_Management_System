@@ -678,3 +678,64 @@ BEGIN
     COMMIT;
 END;
 /
+
+-- Attendance Tracking System
+CREATE TABLE attendance (
+    attendance_id NUMBER PRIMARY KEY,
+    student_id VARCHAR2(20),
+    course_no VARCHAR2(20),
+    attendance_date DATE,
+    status VARCHAR2(10) CHECK (status IN ('Present', 'Absent')),
+    CONSTRAINT fk_att_student FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+    CONSTRAINT fk_att_course FOREIGN KEY (course_no) REFERENCES courses(course_no) ON DELETE CASCADE,
+    CONSTRAINT uq_att_record UNIQUE (student_id, course_no, attendance_date)
+);
+/
+
+-- Sequence equivalent for attendance_id (handled in procedure)
+CREATE OR REPLACE PROCEDURE mark_attendance (
+    p_student_id IN VARCHAR2,
+    p_course_no IN VARCHAR2,
+    p_date IN DATE,
+    p_status IN VARCHAR2
+)
+IS
+    v_count NUMBER;
+    v_new_id NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO v_count FROM attendance 
+    WHERE student_id = p_student_id AND course_no = p_course_no AND attendance_date = p_date;
+    
+    IF v_count > 0 THEN
+        UPDATE attendance SET status = p_status
+        WHERE student_id = p_student_id AND course_no = p_course_no AND attendance_date = p_date;
+    ELSE
+        SELECT NVL(MAX(attendance_id), 0) + 1 INTO v_new_id FROM attendance;
+        INSERT INTO attendance (attendance_id, student_id, course_no, attendance_date, status)
+        VALUES (v_new_id, p_student_id, p_course_no, p_date, p_status);
+    END IF;
+    COMMIT;
+END;
+/
+
+-- PL/SQL Function to calculate attendance percentage
+CREATE OR REPLACE FUNCTION get_attendance_pct (
+    p_student_id IN VARCHAR2,
+    p_course_no IN VARCHAR2
+) RETURN NUMBER IS
+    v_total NUMBER := 0;
+    v_present NUMBER := 0;
+BEGIN
+    SELECT COUNT(*) INTO v_total FROM attendance 
+    WHERE student_id = p_student_id AND course_no = p_course_no;
+    
+    IF v_total = 0 THEN 
+        RETURN 0; 
+    END IF;
+    
+    SELECT COUNT(*) INTO v_present FROM attendance 
+    WHERE student_id = p_student_id AND course_no = p_course_no AND status = 'Present';
+    
+    RETURN ROUND((v_present / v_total) * 100, 2);
+END;
+/

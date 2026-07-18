@@ -199,5 +199,65 @@ namespace StudentManagementSystem.Controllers
             }
             return RedirectToAction("CourseResults", new { courseNo = courseNo });
         }
+
+        public IActionResult TakeAttendance()
+        {
+            try
+            {
+                var courses = _dbHelper.GetAllCourses();
+                return View(courses);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error loading courses: " + ex.Message;
+                return RedirectToAction("Dashboard");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult MarkAttendance(string courseNo, DateTime attendanceDate)
+        {
+            if (string.IsNullOrEmpty(courseNo) || attendanceDate == default)
+            {
+                TempData["ErrorMessage"] = "Please select a valid course and date.";
+                return RedirectToAction("TakeAttendance");
+            }
+
+            try
+            {
+                ViewBag.CourseNo = courseNo;
+                ViewBag.AttendanceDate = attendanceDate;
+                var students = _dbHelper.GetStudentsForAttendance(courseNo, attendanceDate);
+                return View(students);
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error loading students: " + ex.Message;
+                return RedirectToAction("TakeAttendance");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult SaveAttendance(List<StudentManagementSystem.Models.AttendanceRecord> records)
+        {
+            if (records == null || !records.Any())
+            {
+                TempData["ErrorMessage"] = "No attendance data submitted.";
+                return RedirectToAction("TakeAttendance");
+            }
+
+            try
+            {
+                _dbHelper.SaveAttendance(records);
+                TempData["SuccessMessage"] = "Attendance saved successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Error saving attendance: " + ex.Message;
+            }
+
+            var firstRec = records.FirstOrDefault();
+            return RedirectToAction("TakeAttendance"); // Go back to course selection after saving
+        }
     }
 }
